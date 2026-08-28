@@ -1,0 +1,642 @@
+<div class="container-fluid p-0">
+
+    <!-- ================================================= -->
+    <!-- CABEÇALHO -->
+    <!-- ================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h1 class="h3 mb-1">
+                <i class="fas fa-list-check text-primary me-2"></i>
+                Consultar Tarefas
+            </h1>
+
+            <p class="text-muted mb-0">
+                Consulte e gerencie as tarefas cadastradas.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="card shadow-sm border-0">
+
+                <!-- ================================================= -->
+                <!-- CARD HEADER -->
+                <!-- ================================================= -->
+
+                <div class="card-header bg-transparent border-bottom py-3">
+
+                    <div class="d-flex align-items-center">
+
+                        <div
+                            class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle me-2"
+                            style="width: 40px; height: 40px;">
+
+                            <i class="fas fa-magnifying-glass"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5 class="card-title mb-0">
+                                Pesquisa de Tarefas
+                            </h5>
+
+                            <small class="text-muted">
+                                Localize tarefas pela descrição.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    <!-- ================================================= -->
+                    <!-- FILTROS -->
+                    <!-- ================================================= -->
+
+                    <div class="row align-items-end mb-4">
+
+                        <!-- PESQUISA -->
+
+                        <div class="col-md-8">
+
+                            <label class="form-label fw-semibold">
+                                Pesquisar
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-transparent">
+
+                                    <i class="fas fa-search text-muted"></i>
+
+                                </span>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Pesquisar descrição da tarefa"
+                                    [(ngModel)]="filtro"
+                                    (keyup.enter)="aplicarFiltro()">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    (click)="aplicarFiltro()">
+
+                                    <i class="fas fa-search me-1"></i>
+
+                                    Buscar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- REGISTROS POR PÁGINA -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                Registros por página
+                            </label>
+
+                            <select
+                                class="form-select"
+                                [(ngModel)]="tamanhoPagina"
+                                (change)="aplicarFiltro()">
+
+                                <option
+                                    *ngFor="let size of [5,10,20,50]"
+                                    [value]="size">
+
+                                    {{ size }} registros
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- LOADING -->
+                    <!-- ================================================= -->
+
+                    <app-spinner-consulta
+                        *ngIf="carregando"
+                        [carregando]="true"
+                        message="Consultando..."
+                        class="d-inline-block">
+                    </app-spinner-consulta>
+
+                    <!-- ================================================= -->
+                    <!-- ALERTAS -->
+                    <!-- ================================================= -->
+
+                    <app-alerts
+                        *ngIf="!carregando && mensagemSucesso.length > 0"
+                        class="w-100"
+                        titulo="Sucesso!"
+                        [mensagens]="mensagemSucesso"
+                        tipo="success"
+                        icone="fas fa-check-circle fa-lg">
+                    </app-alerts>
+
+                    <app-alerts
+                        *ngIf="!carregando && mensagemErro.length > 0"
+                        class="w-100"
+                        titulo="Erro!"
+                        [mensagens]="mensagemErro"
+                        tipo="danger"
+                        icone="fas fa-times-circle fa-lg">
+                    </app-alerts>
+
+                    <!-- ================================================= -->
+                    <!-- TABELA -->
+                    <!-- ================================================= -->
+
+                    <div
+                        *ngIf="!carregando"
+                        class="table-responsive">
+
+                        <table
+                            class="table table-hover align-middle mb-0">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th class="py-3">
+
+                                        <i class="fas fa-list-check text-primary me-2"></i>
+
+                                        Descrição
+
+                                    </th>
+
+                                    <th class="py-3">
+
+                                        <i class="fas fa-calendar-days text-primary me-2"></i>
+
+                                        Data
+
+                                    </th>
+
+                                    <th class="py-3">
+
+                                        <i class="fas fa-flag text-primary me-2"></i>
+
+                                        Prioridade
+
+                                    </th>
+
+                                    <th class="py-3">
+
+                                        <i class="fas fa-link text-primary me-2"></i>
+
+                                        Vínculo
+
+                                    </th>
+
+                                    <th class="py-3">
+
+                                        <i class="fas fa-circle-check text-primary me-2"></i>
+
+                                        Status
+
+                                    </th>
+
+                                    <th
+                                        class="py-3 text-end"
+                                        style="width: 100px;">
+
+                                        <i class="fas fa-gears text-primary me-2"></i>
+
+                                        Ações
+
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <!-- ================================================= -->
+                                <!-- TAREFAS -->
+                                <!-- ================================================= -->
+
+                                <tr
+                                    *ngFor="let item of dataSource.data"
+                                    class="tarefa-row">
+
+                                    <!-- ================================================= -->
+                                    <!-- DESCRIÇÃO -->
+                                    <!-- ================================================= -->
+
+                                    <td style="max-width: 380px;">
+
+                                        <div class="d-flex align-items-center">
+
+                                            <div
+                                                class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-3 me-3"
+                                                style="
+                                                    width: 38px;
+                                                    height: 38px;
+                                                    min-width: 38px;
+                                                ">
+
+                                                <i class="fas fa-list-check"></i>
+
+                                            </div>
+
+                                            <div class="overflow-hidden">
+
+                                                <span
+                                                    class="fw-semibold text-truncate d-block"
+                                                    [title]="item.descricao">
+
+                                                    {{ item.descricao }}
+
+                                                </span>
+
+                                                <small class="text-muted">
+                                                    Tarefa
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                    <!-- ================================================= -->
+                                    <!-- DATA -->
+                                    <!-- ================================================= -->
+
+                                    <td>
+
+                                        <span class="d-flex align-items-center">
+
+                                            <i class="fas fa-calendar text-primary me-2"></i>
+
+                                            {{ getDataFormatada(item.dataTarefa) }}
+
+                                        </span>
+
+                                    </td>
+
+                                    <!-- ================================================= -->
+                                    <!-- PRIORIDADE -->
+                                    <!-- ================================================= -->
+
+                                    <td>
+
+                                        <span
+                                            class="badge px-3 py-2"
+                                            [ngClass]="{
+
+                                                'badge-subtle-secondary':
+                                                    item.prioridade === 1,
+
+                                                'badge-subtle-info':
+                                                    item.prioridade === 2,
+
+                                                'badge-subtle-warning':
+                                                    item.prioridade === 3,
+
+                                                'badge-subtle-danger':
+                                                    item.prioridade === 4
+
+                                            }">
+
+                                            <i
+                                                *ngIf="item.prioridade === 1"
+                                                class="fas fa-minus me-1">
+                                            </i>
+
+                                            <i
+                                                *ngIf="item.prioridade === 2"
+                                                class="fas fa-arrow-down me-1">
+                                            </i>
+
+                                            <i
+                                                *ngIf="item.prioridade === 3"
+                                                class="fas fa-arrow-up me-1">
+                                            </i>
+
+                                            <i
+                                                *ngIf="item.prioridade === 4"
+                                                class="fas fa-triangle-exclamation me-1">
+                                            </i>
+
+                                            {{ getPrioridade(item.prioridade) }}
+
+                                        </span>
+
+                                    </td>
+
+                                    <!-- ================================================= -->
+                                    <!-- VÍNCULO -->
+                                    <!-- ================================================= -->
+
+                                    <td>
+
+                                        <span
+                                            class="badge badge-subtle-primary px-3 py-2">
+
+                                            <i class="fas fa-link me-1"></i>
+
+                                            {{ getTipoVinculo(item.tipoVinculo) }}
+
+                                        </span>
+
+                                    </td>
+
+                                    <!-- ================================================= -->
+                                    <!-- STATUS -->
+                                    <!-- ================================================= -->
+
+                                    <td>
+
+                                        <span
+                                            class="badge px-3 py-2"
+                                            [ngClass]="{
+
+                                                'badge-subtle-primary':
+                                                    item.statusGeralKanban === 1,
+
+                                                'badge-subtle-warning':
+                                                    item.statusGeralKanban === 2,
+
+                                                'badge-subtle-success':
+                                                    item.statusGeralKanban === 3,
+
+                                                'badge-subtle-danger':
+                                                    item.statusGeralKanban === 4
+
+                                            }">
+
+                                            <!-- A FAZER -->
+
+                                            <i
+                                                *ngIf="item.statusGeralKanban === 1"
+                                                class="fas fa-clock me-1">
+                                            </i>
+
+                                            <!-- EM ANDAMENTO -->
+
+                                            <i
+                                                *ngIf="item.statusGeralKanban === 2"
+                                                class="fas fa-spinner me-1">
+                                            </i>
+
+                                            <!-- CONCLUÍDO -->
+
+                                            <i
+                                                *ngIf="item.statusGeralKanban === 3"
+                                                class="fas fa-circle-check me-1">
+                                            </i>
+
+                                            <!-- CANCELADO -->
+
+                                            <i
+                                                *ngIf="item.statusGeralKanban === 4"
+                                                class="fas fa-ban me-1">
+                                            </i>
+
+                                            {{ getStatus(item.statusGeralKanban) }}
+
+                                        </span>
+
+                                    </td>
+
+                                    <!-- ================================================= -->
+                                    <!-- AÇÕES -->
+                                    <!-- ================================================= -->
+
+                                    <td class="text-end">
+
+                                        <a
+                                            [routerLink]="[
+                                                '/admin/editar-tarefa',
+                                                item.id
+                                            ]"
+                                            title="Editar">
+
+                                            <i class="fas fa-pencil-alt fa-lg"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                <!-- ================================================= -->
+                                <!-- SEM REGISTROS -->
+                                <!-- ================================================= -->
+
+                                <tr
+                                    *ngIf="
+                                        !carregando &&
+                                        dataSource.data.length === 0
+                                    ">
+
+                                    <td
+                                        colspan="6"
+                                        class="text-center py-5">
+
+                                        <div class="text-muted">
+
+                                            <i
+                                                class="fas fa-list-check fa-3x mb-3 opacity-50">
+                                            </i>
+
+                                            <div class="fw-semibold">
+
+                                                Nenhuma tarefa encontrada
+
+                                            </div>
+
+                                            <small>
+
+                                                Altere os filtros e tente novamente.
+
+                                            </small>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- RODAPÉ / PAGINAÇÃO -->
+                    <!-- ================================================= -->
+
+                    <div
+                        class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">
+
+                        <!-- INFORMAÇÕES -->
+
+                        <div class="text-muted small">
+
+                            <i class="fas fa-circle-info me-1"></i>
+
+                            Página
+
+                            <strong>
+                                {{ paginaAtual }}
+                            </strong>
+
+                            de
+
+                            <strong>
+                                {{ totalPaginas }}
+                            </strong>
+
+                            <span class="mx-1">
+                                •
+                            </span>
+
+                            Total:
+
+                            <strong>
+                                {{ totalRegistros }}
+                            </strong>
+
+                            tarefa(s)
+
+                        </div>
+
+                        <!-- PAGINAÇÃO -->
+
+                        <nav *ngIf="totalPaginas > 1">
+
+                            <ul class="pagination pagination-sm mb-0">
+
+                                <!-- PRIMEIRA -->
+
+                                <li
+                                    class="page-item"
+                                    [class.disabled]="paginaAtual === 1">
+
+                                    <button
+                                        type="button"
+                                        class="page-link"
+                                        (click)="irParaPagina(1)">
+
+                                        <i class="fas fa-angles-left"></i>
+
+                                    </button>
+
+                                </li>
+
+                                <!-- ANTERIOR -->
+
+                                <li
+                                    class="page-item"
+                                    [class.disabled]="paginaAtual === 1">
+
+                                    <button
+                                        type="button"
+                                        class="page-link"
+                                        (click)="irParaPagina(paginaAtual - 1)">
+
+                                        <i class="fas fa-angle-left"></i>
+
+                                    </button>
+
+                                </li>
+
+                                <!-- PÁGINAS -->
+
+                                <li
+                                    class="page-item"
+                                    *ngFor="let p of paginasVisiveis"
+                                    [class.active]="p === paginaAtual">
+
+                                    <button
+                                        type="button"
+                                        class="page-link"
+                                        (click)="irParaPagina(p)">
+
+                                        {{ p }}
+
+                                    </button>
+
+                                </li>
+
+                                <!-- PRÓXIMA -->
+
+                                <li
+                                    class="page-item"
+                                    [class.disabled]="
+                                        paginaAtual === totalPaginas
+                                    ">
+
+                                    <button
+                                        type="button"
+                                        class="page-link"
+                                        (click)="irParaPagina(paginaAtual + 1)">
+
+                                        <i class="fas fa-angle-right"></i>
+
+                                    </button>
+
+                                </li>
+
+                                <!-- ÚLTIMA -->
+
+                                <li
+                                    class="page-item"
+                                    [class.disabled]="
+                                        paginaAtual === totalPaginas
+                                    ">
+
+                                    <button
+                                        type="button"
+                                        class="page-link"
+                                        (click)="irParaPagina(totalPaginas)">
+
+                                        <i class="fas fa-angles-right"></i>
+
+                                    </button>
+
+                                </li>
+
+                            </ul>
+
+                        </nav>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

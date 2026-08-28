@@ -1,0 +1,86 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3">Editar Artigo</h1>
+
+    <!-- Bloco de pesquisa -->
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mt-3">
+                        <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+                            class="d-inline-block"></app-spinner>
+
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Formulário -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Titulo</label>
+                                <input type="text" class="form-control" formControlName="titulo"
+                                    placeholder="Informe o titulo do artigo" />
+                                <div class="text-danger"
+                                    *ngIf="form.get('titulo')?.touched && form.get('titulo')?.hasError('required')">
+                                    O titulo do artigo é obrigatório
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Localização -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Sub-titulo</label>
+                                <input type="text" class="form-control" formControlName="subTitulo"
+                                    placeholder="Informe o titulo do artigo" />
+                                <div class="text-danger"
+                                    *ngIf="form.get('subTitulo')?.touched && form.get('subTitulo')?.hasError('required')">
+                                    O Sub-titulo do artigo é obrigatório
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="texto" class="form-label">Descrição do artigo</label>
+
+                                <textarea id="texto" class="form-control" formControlName="texto"
+                                    placeholder="Informe a descrição do artigo" rows="5">
+        </textarea>
+
+                                <div *ngIf="form.get('texto')?.touched && form.get('texto')?.invalid"
+                                    class="text-danger mt-1">
+                                    <span *ngIf="form.get('texto')?.hasError('required')">
+                                        A descrição é obrigatória.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                        <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>

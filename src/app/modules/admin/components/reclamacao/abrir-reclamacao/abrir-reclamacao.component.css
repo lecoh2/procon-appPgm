@@ -1,0 +1,8 @@
+.zindex-dropdown {
+  z-index: 1050 !important; /* ou mais alto se necessário */
+}
+
+#editor-container {
+  position: relative; /* ou static */
+  z-index: 1; /* mais baixo que o autocomplete */
+}

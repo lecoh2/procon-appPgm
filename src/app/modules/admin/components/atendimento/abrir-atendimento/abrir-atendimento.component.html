@@ -1,0 +1,404 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">
+    <i class="align-middle me-2 fas fa-fw fa-bullhorn"></i>
+    Formulário de Atendimento:
+  </h1>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Formulário</h5>
+        </div>
+                <!-- Botão de PDF -->
+                <div *ngIf="pdfGerado" class="d-flex justify-content-end me-3 mb-3">
+                  <a [href]="urlBase + '/api/atendimento/export-pdf-atendimento?codigo=' + codigoAtendimento + '&anoBase=' + anoBaseAtendimento"
+                    target="_blank" rel="noopener noreferrer" class="btn btn-light bg-white" title="Imprimir PDF">
+                    <i class="align-middle me-2 fas fa-print fa-lg"></i>
+                    Imprimir atendimento {{ codigoAtendimento }}/{{ anoBaseAtendimento }}
+                  </a>
+                </div>
+
+                <div class="card-body">
+                  <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+                    class="d-inline-block"></app-spinner>
+
+                  <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                    [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+                  <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                    [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+
+                  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+                    <div class="row">
+
+                      <!-- Reclamante (Pessoa Física) -->
+                      <div class="mb-3 col-md-3 position-relative">
+                        <label for="pessoaInput" class="form-label">Reclamante(s)</label>
+                        <input id="pessoaInput" type="text" class="form-control" placeholder="Digite o nome"
+                          autocomplete="off" [formControl]="pessoaFisicaNomeControl"
+                          (focus)="mostrarSugestoesPessoaFisica = true" (blur)="ocultarSugestoesComDelay()" />
+
+                        <!--Sugestões-->
+                        <ul *ngIf="mostrarSugestoesPessoaFisica && pessoasFisicaFiltradas.length > 0"
+                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                          <li *ngFor="let pessoa of pessoasFisicaFiltradas"
+                            class="list-group-item d-flex justify-content-between align-items-center hover-click"
+                            (mousedown)="selecionarPessoa(pessoa)">
+                            {{ pessoa.nome }} - CPF: {{ pessoa.cpf }}
+                           <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+                          </li>
+                        </ul>
+
+                        <!-- Selecionadas-->
+                        <div *ngIf="pessoasSelecionadas.length > 0" class="form-text text-success mt-2">
+                          <h6 class="card-subtitle text-muted">Pessoas selecionadas:</h6>
+                          <ul class="lista-sem-bolinha">
+                            <li *ngFor="let p of pessoasSelecionadas"
+                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                              <span class="texto-maior">
+                                <strong>{{ p.nome }}</strong><br />
+                                <small class="text-muted">CPF: {{ p.cpf }}</small>
+                              </span>
+                              <button type="button" class="border-0 bg-transparent p-0"
+                                (click)="removerPessoafisicaSelecionada(p)">
+                                <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+<div class="mb-3 col-md-3 position-relative">
+
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <label for="pessoaInput" class="form-label mb-0">Reclamante(s)</label>
+
+    <!-- Botões PF / PJ alinhados na linha do label -->
+    <div class="btn-group btn-group-sm">
+      <button type="button"
+              class="btn"
+              [class.btn-primary]="tipoReclamante === 'pf'"
+              [class.btn-outline-primary]="tipoReclamante !== 'pf'"
+              (click)="mudarParaPF()">
+        P. Fisica
+      </button>
+
+      <button type="button"
+              class="btn"
+              [class.btn-primary]="tipoReclamante === 'pj'"
+              [class.btn-outline-primary]="tipoReclamante !== 'pj'"
+              (click)="mudarParaPJ()">
+        P. Jurídica
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Campo PF -->
+  <input *ngIf="tipoReclamante === 'pf'"
+         id="pessoaInput"
+         type="text"
+         class="form-control"
+         placeholder="Digite o nome"
+         autocomplete="off"
+         [formControl]="pessoaFisicaNomeControl"
+         (focus)="mostrarSugestoesPessoaFisica = true"
+         (blur)="ocultarSugestoesComDelay()" />
+
+  <!-- Sugestões PF -->
+  <ul *ngIf="tipoReclamante === 'pf' &&
+             mostrarSugestoesPessoaFisica &&
+             pessoasFisicaFiltradas.length > 0"
+      class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+    
+    <li *ngFor="let pessoa of pessoasFisicaFiltradas"
+        class="list-group-item d-flex justify-content-between align-items-center hover-click"
+        (mousedown)="selecionarPessoa(pessoa)">
+      {{ pessoa.nome }} - CPF: {{ pessoa.cpf }}
+      <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+    </li>
+  </ul>
+
+  <!-- Campo PJ -->
+  <input *ngIf="tipoReclamante === 'pj'"
+         id="empresaInput"
+         type="text"
+         class="form-control"
+         placeholder="Digite o nome da empresa"
+         autocomplete="off"
+         [formControl]="pessoaPJNomeControl"
+         (focus)="mostrarSugestoesPJ = true"
+         (blur)="ocultarSugestoesComDelay()" />
+
+  <!-- Sugestões PJ -->
+  <ul *ngIf="tipoReclamante === 'pj' &&
+             mostrarSugestoesPJ &&
+             pessoasPJFiltradas.length > 0"
+      class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+
+    <li *ngFor="let pessoa of pessoasPJFiltradas"
+        class="list-group-item d-flex justify-content-between align-items-center hover-click"
+        (mousedown)="selecionarPJ(pessoa)">
+      {{ pessoa.nome }} - CNPJ: {{ pessoa.cnpj }}
+      <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+    </li>
+  </ul>
+
+  <!-- Selecionados (PF e PJ ficam todos juntos) -->
+  <div *ngIf="pessoasSelecionadas.length > 0 || pessoasPJSelecionadas.length > 0"
+       class="form-text text-success mt-2">
+
+    <h6 class="card-subtitle text-muted">Pessoas selecionadas:</h6>
+
+    <ul class="lista-sem-bolinha">
+
+      <!-- PF -->
+      <li *ngFor="let p of pessoasSelecionadas"
+          class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+        
+        <span class="texto-maior">
+          <strong>{{ p.nome }}</strong><br />
+          <small class="text-muted">CPF: {{ p.cpf }}</small>
+        </span>
+
+        <button type="button" class="border-0 bg-transparent p-0"
+                (click)="removerPessoafisicaSelecionada(p)">
+          <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+        </button>
+      </li>
+
+      <!-- PJ -->
+      <li *ngFor="let p of pessoasPJSelecionadas"
+          class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+        
+        <span class="texto-maior">
+          <strong>{{ p.nome }}</strong><br />
+          <small class="text-muted">CNPJ: {{ p.cnpj }}</small>
+        </span>
+
+        <button type="button" class="border-0 bg-transparent p-0"
+                (click)="removerPJSelecionada(p)">
+          <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+                      <!-- Representante Reclamante (Pessoa Física) -->
+                      <div class="mb-3 col-md-3 position-relative">
+                        <label for="representanteReclamanteInput" class="form-label">Repre. Reclamante(s)</label>
+                        <input id="representanteReclamanteInput" type="text" class="form-control"
+                          placeholder="Digite o nome" autocomplete="off" [formControl]="representantesFisicaControl"
+                          (focus)="mostrarSugestoesRepresentantesFisico = true"
+                          (blur)="ocultarSugestoesComDelayRepresentantesFisico()" />
+
+                        <!-- Sugestões -->
+                        <ul *ngIf="mostrarSugestoesRepresentantesFisico && representanteFisicaFiltradas.length > 0"
+                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                          <li *ngFor="let pessoa of representanteFisicaFiltradas"
+                            class="list-group-item d-flex justify-content-between align-items-center hover-click"
+                            (mousedown)="selecionarRepresentantes(pessoa)">
+                            {{ pessoa.nome }} - CPF: {{ pessoa.cpf }}
+                             <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+                          </li>
+                        </ul>
+
+                        <!-- Selecionadas -->
+                        <div *ngIf="representantesFisicoSelecionadas.length > 0" class="form-text mt-2">
+                          <h6 class="card-subtitle text-muted">Representante(s) selecionados:</h6>
+                          <ul class="lista-sem-bolinha">
+                            <li *ngFor="let p of representantesFisicoSelecionadas"
+                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                              <span class="texto-maior">
+                                <strong>{{ p.nome }}</strong><br />
+                                <small class="text-muted">CPF: {{ p.cpf }}</small>
+                              </span>
+                              <button type="button" class="border-0 bg-transparent p-0"
+                                (click)="removerRepresentantefisicoSelecionado(p)">
+                                        <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- Empresa(s) (Pessoa Jurídica) -->
+                      <div class="mb-3 col-md-3 position-relative">
+                        <label for="pessoaJuridicaInput" class="form-label">Empresa(s)</label>
+                        <input id="pessoaJuridicaInput" type="text" class="form-control" placeholder="Digite o nome"
+                          autocomplete="off" [formControl]="pessoaJuridicaNomeControl"
+                          (focus)="mostrarSugestoesPessoaJuridica = true"
+                          (blur)="ocultarSugestoesComDelayPessoaJuridica()" />
+
+                        <!-- Sugestões -->
+                        <ul *ngIf="mostrarSugestoesPessoaJuridica && pessoasJuridicasFiltradas.length > 0"
+                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                          <li *ngFor="let pessoa of pessoasJuridicasFiltradas"
+                            class="list-group-item d-flex flex-column justify-content-start align-items-start hover-click"
+                            (mousedown)="selecionarPessoaJuridica(pessoa)">
+                            <div class="w-100 d-flex justify-content-between align-items-center">
+                              <span>
+                                {{ pessoa.nome }} - CNPJ: {{ pessoa.cnpj }}<br />
+                                <small class="text-muted">
+                                  Endereço: {{ pessoa.endereco?.logradouro }}, {{ pessoa.endereco?.numero }} -
+                                  {{ pessoa.endereco?.bairro }} - {{ pessoa.endereco?.localidade }} CEP: {{
+                                  pessoa.endereco?.cep }}
+                                </small>
+                              </span>
+                        <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+                            </div>
+                          </li>
+                        </ul>
+
+                        <!-- Selecionadas -->
+                        <div *ngIf="pessoasJuridicaSelecionadas.length > 0" class="form-text text-muted mt-2">
+                          <h6 class="card-subtitle text-muted">Empresas selecionadas:</h6>
+                          <ul class="lista-sem-bolinha">
+                            <li *ngFor="let p of pessoasJuridicaSelecionadas"
+                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                              <span class="texto-maior">
+                                <strong>{{ p.nome }}</strong><br />
+                                CNPJ: {{ p.cnpj }}<br />
+                                Endereço: {{ p.endereco?.logradouro }}, {{ p.endereco?.numero }} -
+                                {{ p.endereco?.bairro }} - {{ p.endereco?.localidade }}<br />
+                                CEP: {{ p.endereco?.cep }}
+                              </span>
+                              <button type="button" class="border-0 bg-transparent p-0"
+                                (click)="removerPessoaJuridicaSelecionada(p)">
+                                 <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                                          
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- Representante(s) Jurídico -->
+                      <div class="mb-3 col-md-3 position-relative">
+                        <label for="representanteReclamadaInput" class="form-label">Repre. Empresa(s)</label>
+                        <input id="representanteReclamadaInput" type="text" class="form-control"
+                          placeholder="Digite o nome do representante" autocomplete="off"
+                          [formControl]="representantesJuridicaControl"
+                          (focus)="mostrarSugestoesRepresentantesJuridico = true"
+                          (blur)="ocultarSugestoesComDelayRepresentantesJuridico()" />
+
+                        <!-- Sugestões -->
+                        <ul *ngIf="mostrarSugestoesRepresentantesJuridico && representanteJuridicaFiltradas.length > 0"
+                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                          <li *ngFor="let p of representanteJuridicaFiltradas"
+                            class="list-group-item d-flex justify-content-between align-items-center hover-click"
+                            (mousedown)="selecionarRepresentanteJuridico(p)">
+                            {{ p.nome }} - CPF/CNPJ: {{ p.cpf ?? p.cnpj }}
+                             <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
+                          </li>
+                        </ul>
+
+                        <!-- Selecionadas -->
+                        <div *ngIf="representantesJuridicoSelecionadas.length > 0" class="form-text mt-2">
+                          <h6 class="card-subtitle text-muted">Representante(s) selecionados:</h6>
+                          <ul class="lista-sem-bolinha">
+                            <li *ngFor="let p of representantesJuridicoSelecionadas"
+                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                              <span class="texto-maior">
+                                <strong>{{ p.nome }}</strong><br />
+                                CNPJ: {{ p.cnpj }}<br />
+                                Endereço: {{ p.endereco?.logradouro }}, {{ p.endereco?.numero }} -
+                                {{ p.endereco?.bairro }} - {{ p.endereco?.localidade }}<br />
+                                CEP: {{ p.endereco?.cep }}
+                              </span>
+                              <button type="button" class="border-0 bg-transparent p-0"
+                                (click)="removerRepresetanteSelecionada(p)">
+                                 <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- Artigos -->
+                      <div class="mb-3 col-md-3 position-relative">
+                        <label for="artigoInput" class="form-label">Artigo(s)</label>
+                        <input id="artigoInput" type="text" class="form-control" placeholder="Digite o título do artigo"
+                          autocomplete="off" [formControl]="artigoNomeControl" (focus)="mostrarSugestoesArtigo = true"
+                          (blur)="ocultarSugestoesComDelayArtigo()" />
+
+                        <!-- Sugestões -->
+                        <ul *ngIf="mostrarSugestoesArtigo && artigoFiltradas.length > 0"
+                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown"
+                          style="max-height: 250px; overflow-y: auto;">
+                          <li *ngFor="let artigo of artigoFiltradas"
+                            class="list-group-item d-flex justify-content-between align-items-center hover-click"
+                            (mousedown)="selecionarArtigo(artigo)">
+                            {{ artigo.titulo }}
+                            <i class="fas fa-fw fa-plus-circle text-muted"></i>
+                          </li>
+                        </ul>
+
+                        <!-- Selecionados -->
+                        <div *ngIf="artigosSelecionados.length > 0" class="form-text mt-2">
+                          <h6 class="card-subtitle text-muted">Artigos selecionados:</h6>
+                          <ul class="lista-sem-bolinha">
+                            <li *ngFor="let artigo of artigosSelecionados"
+                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
+                              <span class="texto-maior">
+                                <strong>{{ artigo.titulo }}</strong>
+                              </span>
+                              <button type="button" class="border-0 bg-transparent p-0"
+                                (click)="removerArtigoSelecionado(artigo)">
+                                       <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- Protocolo -->
+                      <div class="col-md-3">
+                        <label for="protocolo" class="form-label">Protocolo</label>
+                        <input type="text" id="protocolo" class="form-control" formControlName="protocolo"
+                          placeholder="Digite o protocolo" />
+                        <div *ngIf="form.get('protocolo')?.touched && form.get('protocolo')?.invalid"
+                          class="text-danger">
+                          <span *ngIf="form.get('protocolo')?.hasError('required')">O protocolo é de preenchimento
+                            obrigatório.</span>
+                        </div>
+                      </div>
+
+                      <!-- Fato (Editor Quill) -->
+                      <!--div class="col-md-12 mt-3">
+                        <label for="editorContainer" class="form-label">Fato</label>
+                        <div #editorContainer id="editorContainer" class="form-control" style="height: 250px;"></div>
+                        <div *ngIf="form.get('fato')?.touched && form.get('fato')?.invalid" class="text-danger">
+                          <span *ngIf="form.get('fato')?.hasError('required')">A descrição é obrigatória.</span>
+                        </div>
+                      </div-->
+                          <div class="col-md-12 mb-4">
+  <label for="fato" class="form-label">Fato</label>
+  <textarea
+    class="form-control"
+    rows="15"
+    formControlName="fato"
+    placeholder="Descreva o fato aqui..."
+  ></textarea>
+  <div *ngIf="form.get('fato')?.touched && form.get('fato')?.invalid" class="text-danger">
+    <span *ngIf="form.get('fato')?.hasError('required')">O Fato é obrigatório.</span>
+  </div>
+</div>
+
+
+
+                      <!-- Botão Salvar -->
+                      <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                          <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                        </button>
+                      </div>
+
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>

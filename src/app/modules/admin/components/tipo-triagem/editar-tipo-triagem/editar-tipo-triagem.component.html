@@ -1,0 +1,56 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Editar o tipo de Triagem </h1>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Informe o nome do tipo de triagem para cadastro</h5>
+        </div>
+        <div class="card-body">
+          <div class="mt-3">
+            <!-- Spinner alinhado à esquerda -->
+            <app-spinner *ngIf="carregando" [show]="true" message="Salvando tipo de triagem..." class="d-inline-block">
+            </app-spinner>
+
+            <!-- Alertas ocupando 100% da largura -->
+            <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+              [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+            </app-alerts>
+
+            <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+              [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+            </app-alerts>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+            <div class="mb-3">
+              <label class="form-label" for="inputAddress">Nome do tipo de triagem</label>
+              <input type="text" class="form-control" id="inputAddress"
+                placeholder="Informe o nome aqui para cadastrar o tipo de triagem" formControlName="nomeTipoTriagem">
+              <div class="text-danger" *ngIf="form.get('nomeTipoTriagem')?.touched">
+
+                <span *ngIf="form.get('nomeTipoTriagem')?.hasError('required')">
+                  O nome do tipo de triagem é obrigatório.
+                </span>
+                <span *ngIf="form.get('nomeTipoTriagem')?.hasError('minlength')">
+                  O nome do tipo de triagem deve ter no mínimo 4 caracteres.
+                </span>
+              </div>
+            </div>
+            
+         
+
+
+              <div class="mt-3">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || carregando">
+                <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+              </button>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+  </div>

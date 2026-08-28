@@ -1,0 +1,243 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Cadastro de Pessoas</h1>
+
+  <!-- Informação sobre campos obrigatórios -->
+ 	<div class="alert alert-info alert-outline-coloured alert-dismissible" role="alert">
+											<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+											<div class="alert-icon">
+											<i class="fa fa-asterisk"></i>
+											</div>
+											<div class="alert-message">
+												 <strong>Campos Com (*)</strong> São de preenchimento obrigatórios!
+											</div>
+										</div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Cadastrar Pessoa Física / Jurídica</h5>
+          <h6 class="card-subtitle text-muted">Formulário para cadastro</h6>
+        </div>
+        <div class="card-body">
+          <div class="mt-3">
+            <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+              class="d-inline-block"></app-spinner>
+
+            <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+              [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+            </app-alerts>
+
+            <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+              [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+            </app-alerts>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <!-- Tipo de Pessoa -->
+       <div class="row mb-3">
+  <div class="col">
+    <label class="form-label">Tipo de Pessoa</label><br />
+    <div class="btn-group" role="group" aria-label="Tipo de Pessoa">
+      <button type="button"
+              class="btn"
+              [ngClass]="{'btn-primary': tipoPessoaSelecionado === 'fisica', 'btn-outline-primary': tipoPessoaSelecionado !== 'fisica'}"
+              (click)="onTipoPessoaChange('fisica')">
+        Pessoa Física
+      </button>
+      <button type="button"
+              class="btn"
+              [ngClass]="{'btn-primary': tipoPessoaSelecionado === 'juridica', 'btn-outline-primary': tipoPessoaSelecionado !== 'juridica'}"
+              (click)="onTipoPessoaChange('juridica')">
+        Pessoa Jurídica
+      </button>
+    </div>
+  </div>
+</div>
+
+
+            <!-- Nome, Telefone e Email -->
+            <div class="row mb-3 align-items-end">
+              <div class="col-md-4">
+                <label class="form-label">Nome *</label>
+                <input type="text" class="form-control" formControlName="nome" placeholder="Informe o nome" />
+                <div class="text-danger" *ngIf="form.get('nome')?.touched && form.get('nome')?.hasError('required')">
+                  O nome é obrigatório.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Telefone(s) *</label>
+                <small class="form-text text-muted">Permitido até 3 telefones separados por ponto e vírgula (;)</small>
+                <input type="text" class="form-control" formControlName="telefone" (blur)="formatarLimitarTelefones()"
+                  placeholder="(00) 00000-0000; (00) 00000-0000; (00) 00000-0000" />
+                <div class="text-danger"
+                  *ngIf="form.get('telefone')?.touched && form.get('telefone')?.hasError('required')">
+                  O telefone é obrigatório.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Email </label>
+                <input type="email" class="form-control" formControlName="email" placeholder="Informe o email" />
+              
+              </div>
+            </div>
+
+            <!-- Dados Pessoa Física -->
+            <ng-container *ngIf="tipoPessoaSelecionado === 'fisica'">
+              <div class="row mb-3 align-items-end">
+                <div class="col-md-4">
+                  <label class="form-label">Profissão *</label>
+                  <input type="text" class="form-control" formControlName="profissao"
+                    placeholder="Informe a profissão" />
+                  <div class="text-danger"
+                    *ngIf="form.get('profissao')?.touched && form.get('profissao')?.hasError('required')">
+                    Profissão é obrigatória.
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">RG </label>
+                  <input type="text" class="form-control" mask="00.000.000-0" formControlName="rg"
+                    placeholder="Informe o RG" />
+              
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">CPF *</label>
+                  <input type="text" class="form-control" mask="000.000.000-00" formControlName="cpf"
+                    placeholder="Informe o CPF" />
+                  <div class="text-danger" *ngIf="form.get('cpf')?.touched && form.get('cpf')?.hasError('required')">
+                    CPF é obrigatório.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Orgão Expeditor</label>
+                  <input type="text" class="form-control" formControlName="expeditor"
+                    placeholder="Informe o órgão expeditor" />
+               
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Sexo *</label>
+                  <select formControlName="idSexo" id="idSexo" class="form-control">
+                    <option value="" disabled>Escolha o sexo</option>
+                    <option *ngFor="let tipo of tiposSexo" [value]="tipo.idSexo">{{ tipo.nomeSexo }}</option>
+                  </select>
+                  <div class="text-danger"
+                    *ngIf="form.get('idSexo')?.touched && form.get('idSexo')?.hasError('required')">
+                    Sexo é obrigatório.
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Dados Pessoa Jurídica -->
+            <ng-container *ngIf="tipoPessoaSelecionado === 'juridica'">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">CNPJ *</label>
+                  <input type="text" class="form-control" mask="00.000.000/0000-00" formControlName="cnpj"
+                    placeholder="Informe o CNPJ" />
+                  <div class="text-danger" *ngIf="form.get('cnpj')?.touched && form.get('cnpj')?.hasError('required')">
+                    CNPJ é obrigatório.
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Inscrição Estadual</label>
+                  <input type="text" class="form-control" formControlName="inscricaoEstadual"
+                    placeholder="Informe a inscrição estadual" />
+                </div>
+
+                <div class="col-md-6 mt-3">
+                  <label class="form-label">Inscrição Municipal </label>
+                  <input type="text" class="form-control" formControlName="inscricaoMunicipal"
+                    placeholder="Informe a inscrição municipal" />
+                  <div class="text-danger"
+                    *ngIf="form.get('inscricaoMunicipal')?.touched && form.get('inscricaoMunicipal')?.hasError('required')">
+                    Inscrição municipal é obrigatória.
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Endereço -->
+            <h5 class="card-title">Endereço</h5>
+            <div class="row mb-3">
+              <div class="col-md-2">
+                <label class="form-label">CEP *</label>
+                <input type="text" class="form-control" mask="00000-000" formControlName="cep"
+                  placeholder="Informe o CEP" (blur)="buscarCep()" />
+                <div class="text-danger" *ngIf="form.get('cep')?.touched && form.get('cep')?.hasError('required')">
+                  CEP é obrigatório.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Endereço *</label>
+                <input type="text" class="form-control" formControlName="logradouro" placeholder="Informe o endereço" />
+                <div class="text-danger"
+                  *ngIf="form.get('logradouro')?.touched && form.get('logradouro')?.hasError('required')">
+                  Endereço é obrigatório.
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <label class="form-label">Número *</label>
+                <input type="text" class="form-control" formControlName="numero" placeholder="Informe o número" />
+                <div class="text-danger"
+                  *ngIf="form.get('numero')?.touched && form.get('numero')?.hasError('required')">
+                  Número é obrigatório.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Complemento</label>
+                <input type="text" class="form-control" formControlName="complemento"
+                  placeholder="Informe o complemento" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Bairro *</label>
+                <input type="text" class="form-control" formControlName="bairro" placeholder="Informe o bairro" />
+                <div class="text-danger"
+                  *ngIf="form.get('bairro')?.touched && form.get('bairro')?.hasError('required')">
+                  Bairro é obrigatório.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Cidade *</label>
+                <input type="text" class="form-control" formControlName="localidade" placeholder="Informe a cidade" />
+                <div class="text-danger"
+                  *ngIf="form.get('localidade')?.touched && form.get('localidade')?.hasError('required')">
+                  Cidade é obrigatória.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">UF *</label>
+                <input type="text" class="form-control" (blur)="onBlurUf()" maxlength="2" formControlName="uf"
+                  placeholder="Informe o UF" />
+                <div class="text-danger" *ngIf="form.get('uf')?.touched && form.get('uf')?.hasError('required')">
+                  UF é obrigatório.
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || carregando">
+              <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

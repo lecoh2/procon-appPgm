@@ -1,0 +1,84 @@
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Cadastro do tipo de Triagem</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Informe o nome do tipo de triagem para cadastro</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mt-3">
+                        <!-- Spinner alinhado à esquerda -->
+                        <app-spinner-consulta *ngIf="carregando" [carregando]="true" message="Consultando..."
+                            class="d-inline-block">
+                        </app-spinner-consulta>
+
+
+                        <!-- Alertas ocupando 100% da largura -->
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+                        </app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+                        </app-alerts>
+                    </div>
+                    <table id="datatables-responsive" class="table table-striped w-100">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Triagem</th>
+                                <th>Data Chegada</th>
+                                <th>Data Saída</th>
+                                <th>Reclamante</th>
+                                <th>Empresa</th>
+
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let triagem of consulta">
+                                <ng-container *ngIf="triagem.controleTriagem as ct">
+                                    <tr>
+                                        <td>
+                                            {{ ct.codigo < 10 ? '0' + ct.codigo : ct.codigo }}/{{ ct.anoBase }} </td>
+                                        <td>{{ triagem.tipoTriagem?.nomeTipoTriagem }}</td>
+                                        <td>{{ triagem.dataChegada | date:'dd/MM/yyyy HH:mm' }}</td>
+                                        <td>{{ triagem.dataSaida | date:'dd/MM/yyyy HH:mm' }}</td>
+                                        <td>
+                                            <p>
+                                                <strong>{{ triagem.reclamante?.nome }}</strong><br />
+                                                <span class="text-muted">CPF: {{ triagem.reclamante?.cpf }}</span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p>
+                                                <strong>{{ triagem.empresa?.nome }}</strong><br />
+                                                <span class="text-muted">CNPJ: {{ triagem.empresa?.cnpj }}</span>
+                                            </p>
+                                        </td>
+                                        <td class="text-end align-middle">
+                                            <a [routerLink]="['/admin/editar-triagem', triagem.idTriagem]"
+                                                title="Editar Triagem">
+                                                <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
+                                            </a>
+                                            <a [href]="urlBase +'/api/triagem/export-pdf-triagem?codigo=' + ct.codigo + '&anoBase=' + ct.anoBase"
+                                                target="_blank" rel="noopener noreferrer" class="ms-2"
+                                                title="Imprimir PDF">
+                                                <i class="align-middle me-2 fas fa-print fa-lg"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </ng-container>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Large modal -->
+
+    </div>

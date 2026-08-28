@@ -1,0 +1,67 @@
+<div class="position-relative">
+
+  <div class="input-group">
+
+    <span
+      class="input-group-text"
+      title="Atendimento"
+    >
+      <i class="fa-solid fa-file-lines"></i>
+    </span>
+
+    <input
+      type="text"
+      class="form-control"
+      [formControl]="control"
+      placeholder="Digite o código. Ex.: 118/2026"
+      autocomplete="off"
+      (focus)="abrir()"
+      (blur)="fechar()"
+    >
+
+    @if (control.value) {
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        title="Limpar"
+        (mousedown)="$event.preventDefault()"
+        (click)="limpar()"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    }
+
+  </div>
+
+  @if (mostrarSugestoes) {
+    <div
+      class="position-absolute start-0 end-0 bg-body border rounded shadow-sm mt-1 overflow-auto"
+      style="z-index: 1050; max-height: 280px;"
+    >
+
+      @if (resultados.length > 0) {
+
+        @for (item of resultados; track item.id) {
+          <button
+            type="button"
+            class="btn btn-link text-start text-decoration-none text-body w-100 border-bottom rounded-0 px-3 py-2"
+            (mousedown)="$event.preventDefault()"
+            (click)="selecionar(item)"
+          >
+            <i class="fa-solid fa-file-lines me-2"></i>
+
+            <strong>{{ getLabel(item) }}</strong>
+          </button>
+        }
+
+      } @else {
+        <div class="p-3 text-secondary text-center">
+          <i class="fa-solid fa-circle-info me-2"></i>
+          Nenhum atendimento encontrado.
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

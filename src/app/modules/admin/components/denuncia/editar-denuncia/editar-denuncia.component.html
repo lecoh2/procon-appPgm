@@ -1,0 +1,494 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3"><i class="align-middle me-2 fas fa-fw fa-bell"></i> Editar Denúncia <span
+      class="badge badge-subtle-success">{{ codigo }}/{{ anoBase
+      }}</span> </h1>
+
+  <span class="mx-2">Cadastrado no dia <span class="badge badge-subtle-success">{{ dataCadastro | date:
+      "dd/MM/yyyy 'às' HH:mm" }}</span></span> <span>Pelo atendente: <span class="badge bg-primary">{{ usuarioCadastro
+      }} </span></span>
+  <div class="d-flex justify-content-end me-3 mb-3">
+    <button class="btn btn-light bg-white" type="button" data-bs-toggle="modal" data-bs-target="#modalHistorico"
+      (click)="abrirModalHistorico()">
+      <i class="fas fa-history me-1"></i> Ver histórico
+    </button>
+  </div>
+
+  <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..." class="d-inline-block">
+  </app-spinner-consulta>
+  <div class="mt-3">
+
+
+    <app-alerts *ngIf="!carregandoCadastro && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+      [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+    <app-alerts *ngIf="!carregandoCadastro && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+      [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+  </div>
+  <div class="row">
+    <div class="col-12 col-sm-6 col-xxl-4 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2 fs-5">Reclamante(s)</h3>
+              <!-- Lista de representantes fisicos -->
+              <ul class="list-unstyled ps-0 lista-pequena">
+                <li *ngFor="let r of grupoReclamantesDenunciaSimples; let i = index" class="px-2 py-1 mb-1">
+                  <span>{{ r.nome }}</span>
+                  <button type="button" class="border-0 bg-transparent" (click)="removerReclamanteDenuncia(i, r.id)">
+                    <i class="fas fa-fw fa-trash-alt text-muted"></i>
+                  </button>
+                </li>
+              </ul>
+              <!-- Total de reclamantes -->
+              <div class="mb-2 fs-6">
+                Total: <span class="badge bg-success text-white fs-6">{{
+                  grupoReclamantesDenunciaSimples.length }}</span>
+              </div>
+              <!-- Botão de adicionar -->
+              <div class="row mt-2">
+                <div class="col-12 text-start">
+                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#taskModal">
+                    <i class="fas fa-plus-circle me-1 fs-6"></i>Reclamante(s)
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+              <div class="stat " style="background: #F7931A; color: white;">
+                <i class="fas fa-frown-open "></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--RECLAMDAS-->
+    <div class="col-12 col-sm-6 col-xxl-4 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2 fs-5">Reclamada(s)</h3>
+
+              <!-- Lista de representantes fisicos -->
+              <ul class="list-unstyled ps-0 lista-pequena">
+                <li *ngFor="let r of grupoReclamadasDenunciaSimples; let i = index" class="px-2 py-1 mb-1">
+                  <span>{{ r.nome }}</span>
+                  <button type="button" class="border-0 bg-transparent" (click)="removerReclamadasDenuncia(i, r.id)">
+                    <i class="fas fa-fw fa-trash-alt text-muted"></i>
+                  </button>
+                </li>
+              </ul>
+
+              <!-- Total de reclamantes -->
+              <div class="mb-2 fs-6">
+                Total: <span class="badge bg-success text-white fs-6">{{
+                  grupoReclamadasDenunciaSimples.length }}</span>
+              </div>
+
+              <!-- Botão de adicionar -->
+              <div class="row mt-2">
+                <div class="col-12 text-start">
+                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#taskModalReclamadas">
+                    <i class="fas fa-plus-circle me-1 fs-6"></i>Reclamada(s)
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+              <div class="stat" style="background: #627EEA; color: white;">
+                <i class="fas fa-building"></i>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--ARTIGOS-->
+    <div class="col-12 col-sm-6 col-xxl-4 d-flex">
+      <div class="card flex-fill">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+              <h3 class="mb-2 fs-5">Artigos(s)</h3>
+
+              <!-- Lista de artigos -->
+              <ul class="list-unstyled ps-0 lista-pequena">
+                <li *ngFor="let r of grupoArtigosDenunciaSimples; let i = index" class="px-2 py-1 mb-1">
+                  <span>{{ r.titulo }}</span>
+                  <button type="button" class="border-0 bg-transparent" (click)="removerArtigoADenuncia(i, r.idArtigo)">
+                    <i class="fas fa-fw fa-trash-alt text-muted"></i>
+                  </button>
+                </li>
+              </ul>
+
+              <!-- Total de reclamantes -->
+              <div class="mb-2 fs-6">
+                Total: <span class="badge bg-success text-white fs-6">{{
+                  grupoArtigosDenunciaSimples.length }}</span>
+              </div>
+
+              <!-- Botão de adicionar -->
+              <div class="row mt-2">
+                <div class="col-12 text-start">
+                  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#taskmodalArtigos">
+                    <i class="fas fa-plus-circle me-1 fs-6"></i>Artigo(s)
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="d-inline-block ms-3">
+              <div class="stat" style="background: #33c307; color: white;">
+                <i class="fas fa-circle-info"></i>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+
+
+        <div class="col-md-12 mb-4">
+          <label for="denuncia_Fato" class="form-label">Denúncia</label>
+          <!--div #editorContainer id="editor-container" class="form-control" style="height: 250px;"></div-->
+          <div *ngIf="form.get('denuncia_Fato')?.touched && form.get('denuncia_Fato')?.invalid" class="text-danger">
+            <span *ngIf="form.get('denuncia_Fato')?.hasError('required')">O Fato é obrigatório.</span>
+          </div>
+        </div>
+        <div class="col-md-12 mb-4">
+          <label class="form-label" for="motivo">Motivo da Edição</label>
+          <textarea id="observacoes" formControlName="observacoes" class="form-control"
+            placeholder="Descreva o motivo da edição" rows="3"></textarea>
+          <div class="text-danger" *ngIf="form.get('motivo')?.touched">
+
+            <span *ngIf="form.get('observacoes')?.hasError('required')">
+              O motivo da edção é obrigatorio.
+            </span>
+            <span *ngIf="form.get('observacoes')?.hasError('minlength')">
+              o motivo da edição deve ter no mínimo 20 caracteres.
+            </span>
+          </div>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregandoCadastro">
+            <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+          </button>
+        </div>
+      </form>
+    </div>
+    <!-- Modal Artighos -->
+    <div class="modal fade" id="taskmodalArtigos" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Adicionar novo(s) Artigo(s)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body mx-3">
+
+            <div class="mb-3 col-md-12 position-relative">
+              <label class="form-label" for="artigoInput">Artigo(s)</label>
+              <input type="text" id="artigoInput" class="form-control form-control-lg" placeholder="Digite o nome"
+                autocomplete="off" [formControl]="artigosNomeControl" (focus)="mostrarSugestoesArtigo = true"
+                (blur)="ocultarSugestoesComDelay()" />
+              <ul *ngIf="mostrarSugestoesArtigo && artigosFiltrados.length > 0"
+                class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                <li *ngFor="let artigo of artigosFiltrados"
+                  class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                  (mousedown)="selecionarArtigo(artigo)">
+                  {{ artigo.titulo }} <i class="fas fa-user-plus text-muted"></i>
+                </li>
+              </ul>
+              <div *ngIf="artigosSelecionados.length > 0" class="form-text text-success mt-2">
+                <h6 class="card-subtitle text-muted">Artigos selecionadas:</h6>
+                <ul class="lista-sem-bolinha">
+                  <li *ngFor="let p of artigosSelecionados"
+                    class="d-flex justify-content-between align-items-center mb-1 small px-1 py-0">
+                    <span>{{ p.titulo }} - Sub Titulo: {{ p.subTitulo }}</span>
+                    <button type="button" class="border-0 bg-transparent p-0" (click)="removerartigoSelecionada(p)">
+                      <i class="fas fa-fw fa-trash-alt text-muted fa-2x text-danger"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="text-danger" *ngIf="form.get('artigo')?.touched && form.get('artigo')?.invalid">
+                <span *ngIf="form.get('artigo')?.hasError('required')">O nome do artigo é obrigatório.</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..."
+                class="d-inline-block">
+              </app-spinner-consulta>
+              <app-spinner *ngIf="carregandoCadastro" [show]="true" message="Cadastrando ..."
+                class="d-inline-block"></app-spinner>
+
+              <app-alerts *ngIf="!carregandoCadastro && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+              <app-alerts *ngIf="!carregandoCadastro && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="fecharModalEAtualizar()">
+              Fechar
+            </button>
+            <button class="btn btn-primary" (click)="salvarArtigosDenuncia()">
+              <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Reclamantes -->
+    <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Adicionar novo(s) reclamante(s)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body mx-3">
+            <div class="mb-3 col-md-12 position-relative">
+              <label class="form-label" for="pessoaInput">Reclamante(s)</label>
+              <input type="text" id="pessoaInput" class="form-control form-control-lg" placeholder="Digite o nome"
+                autocomplete="off" [formControl]="pessoaNomeControl" (focus)="mostrarSugestoesPessoaFisica = true"
+                (blur)="ocultarSugestoesComDelay()" />
+              <ul *ngIf="mostrarSugestoesPessoaFisica && pessoasFiltradas.length > 0"
+                class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                <li *ngFor="let pessoa of pessoasFiltradas"
+                  class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                  (mousedown)="selecionarPessoa(pessoa)">
+                  {{ pessoa.nome }} <i class="fas fa-user-plus text-muted"></i>
+                </li>
+              </ul>
+              <div *ngIf="pessoasSelecionadas.length > 0" class="form-text text-success mt-2">
+                <h6 class="card-subtitle text-muted">Pessoas selecionadas:</h6>
+                <ul class="lista-sem-bolinha">
+                  <li *ngFor="let p of pessoasSelecionadas"
+                    class="d-flex justify-content-between align-items-center mb-1 small px-1 py-0">
+                    <span>{{ p.nome }} </span>
+                    <button type="button" class="border-0 bg-transparent p-0" (click)="removerPessoaSelecionada(p)">
+                      <i class="fas fa-fw fa-trash-alt text-muted fa-2x text-danger"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="text-danger" *ngIf="form.get('reclamante')?.touched && form.get('reclamante')?.invalid">
+                <span *ngIf="form.get('reclamante')?.hasError('required')">O nome do reclamante é obrigatório.</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..."
+                class="d-inline-block">
+              </app-spinner-consulta>
+              <app-spinner *ngIf="carregandoCadastro" [show]="true" message="Cadastrando ..."
+                class="d-inline-block"></app-spinner>
+
+              <app-alerts *ngIf="!carregandoCadastro && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+              <app-alerts *ngIf="!carregandoCadastro && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="fecharModalEAtualizar()">
+              Fechar
+            </button>
+            <button class="btn btn-primary" (click)="salvarReclamantesDenuncia()">
+              <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Reclamantes -->
+    <div class="modal fade" id="taskModalReclamadas" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Adicionar nova(s) reclamadas(s)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body mx-3">
+            <div class="mb-3 col-md-12 position-relative">
+              <label class="form-label" for="pessoaInput">Reclamadas(s)</label>
+              <input type="text" id="reclamadaInput" class="form-control form-control-lg" placeholder="Digite o nome"
+                autocomplete="off" [formControl]="pessoaJuridicaNomeControl"
+                (focus)="mostrarSugestoesPessoaJuridica = true" (blur)="ocultarSugestoesComDelayPessoaJuridica()" />
+              <ul *ngIf="mostrarSugestoesPessoaJuridica && pessoasJuridicasFiltradas.length > 0"
+                class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                <li *ngFor="let pessoa of pessoasJuridicasFiltradas"
+                  class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                  (mousedown)="selecionarReclamada(pessoa)">
+                  {{ pessoa.nome }} <i class="fas fa-user-plus text-muted"></i>
+                </li>
+              </ul>
+              <div *ngIf="pessoasJuridicaSelecionadas.length > 0" class="form-text text-success mt-2">
+                <h6 class="card-subtitle text-muted">Empresa selecionadas:</h6>
+                <ul class="lista-sem-bolinha">
+                  <li *ngFor="let p of pessoasJuridicaSelecionadas"
+                    class="d-flex justify-content-between align-items-center mb-1 small px-1 py-0">
+                    <span>{{ p.nome }} - CNPJ: {{ p.cnpj }}</span>
+                    <button type="button" class="border-0 bg-transparent p-0"
+                      (click)="removerPessoaJuridicaSelecionada(p)">
+                      <i class="fas fa-fw fa-trash-alt text-muted fa-2x "></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="text-danger" *ngIf="form.get('reclamda')?.touched && form.get('reclamada')?.invalid">
+                <span *ngIf="form.get('reclamada')?.hasError('required')">O nome da empresa é obrigatório.</span>
+              </div>
+            </div>
+            <div class="mt-3">
+              <app-spinner-consulta *ngIf="carregandoConsulta" [carregando]="true" message="Consultando..."
+                class="d-inline-block">
+              </app-spinner-consulta>
+              <app-spinner *ngIf="carregandoCadastro" [show]="true" message="Cadastrando ..."
+                class="d-inline-block"></app-spinner>
+              <app-alerts *ngIf="!carregandoCadastro && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+              <app-alerts *ngIf="!carregandoCadastro && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" (click)="fecharModalEAtualizar()">
+              Fechar
+            </button>
+            <button class="btn btn-primary" (click)="salvarReclamadasDenuncia()">
+              <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal de Histórico da Reclamação -->
+    <div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalHistoricoLabel">
+              Histórico da Denúncia {{ form.value.codigo }} / {{ form.value.anoBase }}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <ng-container *ngIf="historicoDenuncia.length > 0; else semHistorico">
+              <div *ngFor="let item of historicoDenuncia" class="border rounded p-3 mb-4">
+                <dl class="row">
+                  <dt class="col-sm-3">Usuário que fez a edição:</dt>
+                  <dd class="col-sm-9">{{ item.nomeUsuario || 'Não informado' }}</dd>
+                  <dt class="col-sm-3">Data da edição:</dt>
+                  <dd class="col-sm-9">{{ item.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}</dd>              
+                  <dt class="col-sm-3">Motivo da Alteração:</dt>
+                  <dd class="col-sm-9">{{ item.observacoes || 'Não informado' }}</dd>
+                </dl>
+                <div class="row">
+                  <!-- Dados Antes -->
+                  <div class="col-md-6">
+                    <h6>Dados Antes</h6>
+                    <table class="table table-sm table-bordered">
+                      <tbody>
+                        <tr>
+                          <th>Fato</th>
+                          <td [innerHTML]="item.dadosAntesObj?.Denuncia_Fato || 'Não informado'"></td>
+                        </tr>
+                        <tr>
+                          <th>Reclamantes</th>
+                          <td>
+                            <ul class="m-0 ps-3">
+                              <li *ngFor="let r of item.dadosAntesObj?.
+grupoReclamantesDenuncia
+">{{ r }}</li>
+                            </ul>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Reclamadas</th>
+                          <td>
+                            <ul class="m-0 ps-3">
+                              <li *ngFor="let r of item.dadosAntesObj?.grupoReclamadasDenuncia
+">{{ r }}</li>
+                            </ul>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Artigos</th>
+                          <td>
+                            <ul class="m-0 ps-3">
+                              <li *ngFor="let r of item.dadosAntesObj?.GrupoArtigosDenuncia
+">{{ r }}</li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Dados Depois -->
+                  <div class="col-md-6">
+                    <h6>Dados Depois</h6>
+                    <table class="table table-sm table-bordered">
+                      <tbody>
+                        <tr>
+                          <th>Fato</th>
+                          <td [innerHTML]="item.dadosAntesObj?.Denuncia_Fato || 'Não informado'"></td>
+                        </tr>
+                        <tr>
+                          <th>Reclamantes</th>
+                          <td>
+                            <ul class="m-0 ps-3">
+                              <li *ngFor="let r of item.dadosDepoisObj?.grupoReclamadasDenuncia
+
+">{{ r }}</li>
+                            </ul>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <th>Reclamadas</th>
+                          <td>
+                            <ul class="m-0 ps-3">
+                              <li *ngFor="let r of item.dadosDepoisObj?.grupoReclamadasDenuncia">{{ r }}</li>
+                            </ul>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <th>Artigos</th>
+                          <td>
+                            <ul class="m-0 ps-3">
+                              <li *ngFor="let r of item.dadosDepoisObj?.GrupoArtigosDenuncia">{{ r }}</li>
+                            </ul>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <ng-template #semHistorico>
+              <div class="alert alert-warning">Nenhum histórico encontrado para esta reclamação.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>

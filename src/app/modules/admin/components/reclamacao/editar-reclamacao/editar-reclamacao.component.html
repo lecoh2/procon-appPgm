@@ -1,0 +1,404 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3"><i class="align-middle me-2 fas fa-fw fa-bullhorn"></i> Reclamação: <span
+      class="badge badge-subtle-success me-1">{{ codigo }}/{{ anoBase
+      }}</span> Conformidade: Lei 8078/90 -
+    Dec. FED. 2181/97 e Lei 8137/90</h1>
+  <span class="">cadastrado no dia {{ dataReclamacao
+    | date:
+    "dd/MM/yyyy 'às' HH:mm" }},</span>
+  <span>pelo atendente {{ usuarioCadastro }} </span>
+  Atendimento<span class="badge badge-subtle-info me-1"> {{ codigoAtendimento }}/{{
+    anoBaseAtendimento
+    }}</span>
+  <div class="d-flex justify-content-end me-3 mb-3">
+    <button class="btn btn-light bg-white" type="button" data-bs-toggle="modal" data-bs-target="#modalHistorico"
+      (click)="abrirModalHistorico()">
+      <i class="fas fa-history me-1"></i> Ver histórico
+    </button>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12">
+
+      <div class="row">
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Reclamante(s)</h3>
+
+                  <!-- Lista de representantes fisicos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoReclamantes; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoReclamantes.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat " style="background: #F7931A; color: white;">
+                    <i class="fas fa-frown-open "></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!--REPRESENTANTESE FISICOS-->
+
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Representante(s)</h3>
+
+                  <!-- Lista de representantes fisicos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoRepresentanteAtendimentoFisico; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoRepresentanteAtendimentoFisico.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #345D9D; color: white;">
+                    <i class="fas fa-user-friends"></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--RECLAMDAS-->
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Reclamada(s)</h3>
+
+                  <!-- Lista de representantes fisicos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoReclamadas; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoReclamadas.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #627EEA; color: white;">
+                    <i class="fas fa-building"></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--REPRESENTANTESE Juridico-->
+
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Representante(s)</h3>
+
+                  <!-- Lista de representantes juridico -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoRepresentanteAtendimentoJuridica; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoRepresentanteAtendimentoJuridica.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #FF6600; color: white;">
+                    <i class="fas fa-user-tie"></i>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--ARTIGOS-->
+
+      <div class="col-12 col-sm-12 col-xxl-12 d-flex">
+        <div class="card flex-fill">
+          <div class="card-body py-3">
+            <div class="d-flex align-items-start">
+              <div class="flex-grow-1">
+                <h3 class="mb-2 fs-5">Artigos(s)</h3>
+
+                <!-- Lista de artigos -->
+                <ul class="list-unstyled ps-0 lista-pequena">
+                  <li *ngFor="let r of grupoArtigos; let i = index" class="px-2 py-1 mb-1">
+                    <span>{{ r }}</span>
+
+                  </li>
+                </ul>
+
+                <!-- Total de reclamantes -->
+                <div class="mb-2 fs-6">
+                  Total: <span class="badge bg-success text-white fs-6">{{
+                    grupoArtigos.length }}</span>
+                </div>
+
+                <!-- Botão de adicionar -->
+
+              </div>
+              <div class="d-inline-block ms-3">
+                <div class="stat" style="background: #33c307; color: white;">
+                  <i class="fas fa-circle-info"></i>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="mt-3">
+        <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..." class="d-inline-block"></app-spinner>
+
+        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+          [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+          [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+        <!-- Outros campos do formulário -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label for="dataAudiencia" class="form-label">Data da Audiência</label>
+            <input type="date" id="dataAudiencia" class="form-control" formControlName="dataAudiencia" />
+            <div *ngIf="form.get('dataAudiencia')?.touched && form.get('dataAudiencia')?.invalid" class="text-danger">
+              <span *ngIf="form.get('dataAudiencia')?.hasError('required')">A data da audiência é
+                obrigatória.</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="hora" class="form-label">Hora</label>
+<select class="form-select" formControlName="hora">
+  <option value="">Selecione a hora</option>
+
+  <option *ngFor="let h of horariosDisponiveis"
+          [value]="h.hora">{{ formatarHorario(h.hora, h.dataAudiencia) }}
+    {{ h.hora }}
+  </option>
+</select>
+
+
+
+            <div *ngIf="form.get('hora')?.touched && form.get('hora')?.invalid" class="text-danger">
+              <span *ngIf="form.get('hora')?.hasError('required')">A hora é obrigatória.</span>
+            </div>
+          </div>
+
+
+        </div><br />
+        <!--div class="col-md-12 mb-4">
+          <label for="descricao" class="form-label">Descrição</label>
+          <div #editorContainer id="editor-container" class="form-control" style="height: 250px;"></div>
+          <div *ngIf="form.get('descricao')?.touched && form.get('descricao')?.invalid" class="text-danger">
+            <span *ngIf="form.get('descricao')?.hasError('required')">A descrição é obrigatória.</span>
+          </div>
+        </div-->
+
+        <div class="col-md-12 mb-4">
+          <label for="descricao" class="form-label">Descrição</label>
+          <textarea class="form-control" rows="15" formControlName="descricao"
+            placeholder="Descreva o fato ocorrido..."></textarea>
+          <div *ngIf="form.get('descricao')?.touched && form.get('descricao')?.invalid" class="text-danger">
+            <span *ngIf="form.get('descricao')?.hasError('required')">O Fato é obrigatório.</span>
+          </div>
+        </div>
+
+
+        <!-- Orientação -->
+
+        <div class="col-md-12 mb-4">
+          <label class="form-label" for="motivo">Motivo da Edição</label>
+          <textarea id="observacoes" formControlName="observacoes" class="form-control"
+            placeholder="Descreva o motivo da edição" rows="3"></textarea>
+          <div class="text-danger" *ngIf="form.get('motivo')?.touched">
+
+            <span *ngIf="form.get('observacoes')?.hasError('required')">
+              O motivo da edção é obrigatorio.
+            </span>
+            <span *ngIf="form.get('observacoes')?.hasError('minlength')">
+              o motivo da edição deve ter no mínimo 20 caracteres.
+            </span>
+          </div>
+        </div>
+
+
+        <!-- Botão de salvar separado -->
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+            <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- Modal de Histórico da Reclamação -->
+    <div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalHistoricoLabel">
+
+              Histórico da Reclamação <span class="badge badge-subtle-success me-1">{{ form.value.codigo }} / {{
+                form.value.anoBase }}</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <ng-container *ngIf="historicoReclamacao.length > 0; else semHistorico">
+              <div *ngFor="let item of historicoReclamacao" class="border rounded p-3 mb-4">
+
+                <dl class="row">
+                  <dt class="col-sm-3">Usuário que fez a edição:</dt>
+                  <dd class="col-sm-9">{{ item.nomeUsuario || 'Não informado' }}</dd>
+
+                  <dt class="col-sm-3">Data da edição:</dt>
+                  <dd class="col-sm-9">{{ item.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}</dd>
+
+                  <dt class="col-sm-3">Tipo de alteração:</dt>
+                  <dd class="col-sm-9">{{ item.tipoAlteracao || 'Não informado' }}</dd>
+
+                  <dt class="col-sm-3">Observações:</dt>
+                  <dd class="col-sm-9">{{ item.observacoes || 'Não informado' }}</dd>
+                </dl>
+
+                <div class="row">
+                  <!-- Dados Antes -->
+                  <div class="col-md-6">
+                    <h6>Dados Antes</h6>
+                    <table class="table table-sm table-bordered">
+                      <tbody>
+                        <tr>
+                          <th>Descrição</th>
+                          <td [innerHTML]="item.dadosAntesObj?.Descricao || 'Não informado'"></td>
+                        </tr>
+                        <tr>
+                          <th>Data da Audiência</th>
+                          <td>
+                            <ng-container *ngIf="item.dadosAntesObj?.DataAudiencia; else naoInformadoAntes">
+                              {{ item.dadosAntesObj.DataAudiencia | date: 'dd/MM/yyyy' }}
+                            </ng-container>
+                            <ng-template #naoInformadoAntes>Não informado</ng-template>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Hora</th>
+                          <td>{{ item.dadosAntesObj?.Hora || 'Não informado' }}</td>
+                        </tr>
+
+
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Dados Depois -->
+                  <div class="col-md-6">
+                    <h6>Dados Depois</h6>
+                    <table class="table table-sm table-bordered">
+                      <tbody>
+                        <tr>
+                          <th>Descrição</th>
+                          <td [innerHTML]="item.dadosDepoisObj?.Descricao || 'Não informado'"></td>
+                        </tr>
+                        <tr>
+                          <th>Data da Audiência</th>
+                          <td>
+                            <ng-container *ngIf="item.dadosDepoisObj?.DataAudiencia; else naoInformadoDepois">
+                              {{ item.dadosDepoisObj.DataAudiencia | date: 'dd/MM/yyyy' }}
+                            </ng-container>
+                            <ng-template #naoInformadoDepois>Não informado</ng-template>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Hora</th>
+                          <td>{{ item.dadosDepoisObj?.Hora || 'Não informado' }}</td>
+                        </tr>
+
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            </ng-container>
+
+            <ng-template #semHistorico>
+              <div class="alert alert-warning">Nenhum histórico encontrado para esta reclamação.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+  </div>

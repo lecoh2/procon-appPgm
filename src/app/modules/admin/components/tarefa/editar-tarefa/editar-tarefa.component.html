@@ -1,0 +1,592 @@
+<div class="container-fluid p-0">
+
+  <h1 class="h3 mb-3">
+    Editar Tarefa
+  </h1>
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h5 class="card-title">
+        Editar Tarefa
+      </h5>
+
+      <h6 class="card-subtitle text-muted">
+        Atualize os dados da tarefa
+      </h6>
+
+    </div>
+
+    <div class="card-body">
+
+      <!-- ========================= -->
+      <!-- SPINNER -->
+      <!-- ========================= -->
+
+      <app-spinner
+        *ngIf="carregando"
+        [show]="true">
+      </app-spinner>
+
+      <!-- ========================= -->
+      <!-- SUCESSO -->
+      <!-- ========================= -->
+
+      <app-alerts
+        *ngIf="
+          !carregando &&
+          mensagemSucesso.length > 0
+        "
+        class="w-100"
+        titulo="Sucesso!"
+        [mensagens]="mensagemSucesso"
+        tipo="success"
+        icone="fas fa-check-circle fa-lg">
+      </app-alerts>
+
+      <!-- ========================= -->
+      <!-- ERRO -->
+      <!-- ========================= -->
+
+      <app-alerts
+        *ngIf="
+          !carregando &&
+          mensagemErro.length > 0
+        "
+        class="w-100"
+        titulo="Erro!"
+        [mensagens]="mensagemErro"
+        tipo="danger"
+        icone="fas fa-times-circle fa-lg">
+      </app-alerts>
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+
+        <!-- ========================= -->
+        <!-- HISTÓRICO -->
+        <!-- ========================= -->
+
+        <div
+          class="
+            d-flex
+            justify-content-end
+            mb-3
+          ">
+
+          <button
+            type="button"
+            class="btn btn-light bg-white border"
+            (click)="abrirHistoricoTarefa(id)">
+
+            <i class="fas fa-history me-2"></i>
+
+            Histórico
+
+          </button>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- ETIQUETAS -->
+        <!-- ========================= -->
+
+        <div class="mb-3">
+
+          <label class="form-label">
+            Etiquetas
+          </label>
+
+          <app-etiquetas
+            [etiquetas]="grupoTarefasEtiquetas"
+            [(selecionadas)]="etiquetasSelecionadas">
+          </app-etiquetas>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- DESCRIÇÃO -->
+        <!-- ========================= -->
+
+        <div class="row mb-3">
+
+          <div class="col-md-12">
+
+            <label class="form-label">
+              Descrição *
+            </label>
+
+            <textarea
+              class="form-control"
+              rows="4"
+              formControlName="descricao">
+            </textarea>
+
+            <div
+              *ngIf="
+                form.get('descricao')?.touched &&
+                form.get('descricao')?.invalid
+              "
+              class="text-danger mt-1">
+
+              <span
+                *ngIf="
+                  form.get('descricao')
+                    ?.hasError('required')
+                ">
+
+                A descrição é obrigatória.
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- DATA + RESPONSÁVEL -->
+        <!-- ========================= -->
+
+        <div class="row mb-3">
+
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Data da tarefa
+            </label>
+
+            <input
+              type="date"
+              class="form-control"
+              formControlName="dataTarefa">
+
+          </div>
+
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Responsável
+            </label>
+
+            <app-selecionar-responsaveis
+              [resultados]="responsaveisFiltrados"
+              [(selecionadas)]="responsaveisSelecionados"
+              (buscar)="buscarResponsaveis($event)">
+            </app-selecionar-responsaveis>
+
+          </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- STATUS + PRIORIDADE -->
+        <!-- ========================= -->
+
+        <div class="row mb-3">
+
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Status
+            </label>
+
+            <select
+              class="form-select"
+              formControlName="statusGeralKanban">
+
+              <option
+                [ngValue]="statusEnum.A_Fazer">
+                A Fazer
+              </option>
+
+              <option
+                [ngValue]="statusEnum.Em_Andamento">
+                Em Andamento
+              </option>
+
+              <option
+                [ngValue]="statusEnum.Concluido">
+                Concluído
+              </option>
+
+              <option
+                [ngValue]="statusEnum.Cancelado">
+                Cancelado
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Prioridade
+            </label>
+
+            <select
+              class="form-select"
+              formControlName="prioridade">
+
+              <option
+                [ngValue]="prioridadeEnum.Baixa">
+                Baixa
+              </option>
+
+              <option
+                [ngValue]="prioridadeEnum.Media">
+                Média
+              </option>
+
+              <option
+                [ngValue]="prioridadeEnum.Alta">
+                Alta
+              </option>
+
+              <option
+                [ngValue]="prioridadeEnum.Urgente">
+                Urgente
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- VÍNCULO -->
+        <!-- ========================= -->
+
+        <div class="row mb-3">
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Tipo de Vínculo
+            </label>
+
+            <select
+              class="form-select"
+              formControlName="tipoVinculo">
+
+              <option
+                [ngValue]="null">
+                Selecione
+              </option>
+
+              <option
+                [ngValue]="'atendimento'">
+                Atendimento
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="col-md-8">
+
+            <label class="form-label">
+              Buscar Atendimento
+            </label>
+
+            <app-vinculo
+              [resultados]="resultadosVinculo"
+              [vinculoSelecionado]="vinculoSelecionado"
+              [tipoVinculo]="form.get('tipoVinculo')?.value ?? null"
+              (buscar)="buscarVinculo($event)"
+              (selecionado)="selecionarVinculo($event)">
+            </app-vinculo>
+
+          </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- BOTÕES -->
+        <!-- ========================= -->
+
+        <div
+          class="
+            d-flex
+            align-items-center
+            gap-2
+            mt-4
+          ">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="irParaLista()">
+
+            <i class="fas fa-arrow-left me-2"></i>
+
+            Voltar
+
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="
+              carregando ||
+              form.invalid
+            ">
+
+            <i class="fas fa-save me-2"></i>
+
+            <span *ngIf="!carregando">
+              Atualizar Tarefa
+            </span>
+
+            <span *ngIf="carregando">
+              Atualizando...
+            </span>
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- MODAL HISTÓRICO -->
+  <!-- ========================= -->
+
+  <div
+    #modalHistorico
+    class="modal fade"
+    tabindex="-1"
+    aria-hidden="true"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false">
+
+    <div
+      class="
+        modal-dialog
+        modal-xl
+        modal-dialog-scrollable
+      ">
+
+      <div class="modal-content">
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+          <h5 class="modal-title">
+
+            <i class="fas fa-history me-2"></i>
+
+            Histórico da Tarefa
+
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal">
+          </button>
+
+        </div>
+
+        <!-- BODY -->
+
+        <div class="modal-body">
+
+          <!-- LOADING -->
+
+          <div
+            *ngIf="carregandoHistorico"
+            class="text-center p-4">
+
+            <i
+              class="
+                fas
+                fa-spinner
+                fa-spin
+                me-2
+              ">
+            </i>
+
+            Carregando histórico...
+
+          </div>
+
+          <!-- SEM HISTÓRICO -->
+
+          <div
+            *ngIf="
+              !carregandoHistorico &&
+              historico.length === 0
+            "
+            class="
+              text-center
+              text-muted
+              p-4
+            ">
+
+            <i
+              class="
+                fas
+                fa-clock-rotate-left
+                fa-2x
+                mb-2
+                opacity-50
+              ">
+            </i>
+
+            <div>
+              Nenhum histórico encontrado.
+            </div>
+
+          </div>
+
+          <!-- HISTÓRICO -->
+
+          <ul
+            *ngIf="
+              !carregandoHistorico &&
+              historico.length > 0
+            "
+            class="timeline">
+
+            <li
+              *ngFor="let h of historico"
+              class="
+                timeline-item
+                pb-4
+                mb-4
+                border-bottom
+              ">
+
+              <div
+                class="
+                  d-flex
+                  justify-content-between
+                  align-items-center
+                  mb-2
+                  flex-wrap
+                  gap-2
+                ">
+
+                <strong>
+
+                  {{
+                    h.observacao ||
+                    'Atualização'
+                  }}
+
+                </strong>
+
+                <small class="text-muted">
+
+                  Usuário que fez a alteração:
+
+                  <strong>
+                    {{
+                      h.usuarioNome ||
+                      'Sistema'
+                    }}
+                  </strong>
+
+                </small>
+
+                <span
+                  class="text-muted small">
+
+                  Data da alteração:
+
+                  <strong>
+
+                    {{
+                      h.dataAlteracao
+                        | date:'dd/MM/yyyy HH:mm'
+                    }}
+
+                  </strong>
+
+                </span>
+
+              </div>
+
+              <!-- ALTERAÇÕES -->
+
+              <div
+                *ngFor="
+                  let m of getMudancas(h)
+                "
+                class="mb-2">
+
+                <strong>
+
+                  {{
+                    formatarCampo(
+                      m.campo
+                    )
+                  }}
+
+                </strong>
+
+                <div>
+
+                  <span
+                    class="
+                      text-danger
+                      text-decoration-line-through
+                    ">
+
+                    {{
+                      formatarValor(
+                        m.antes,
+                        m.campo
+                      )
+                    }}
+
+                  </span>
+
+                  <i
+                    class="
+                      fas
+                      fa-arrow-right
+                      mx-2
+                    ">
+                  </i>
+
+                  <span
+                    class="text-success">
+
+                    {{
+                      formatarValor(
+                        m.depois,
+                        m.campo
+                      )
+                    }}
+
+                  </span>
+
+                </div>
+
+              </div>
+
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

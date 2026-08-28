@@ -1,0 +1,342 @@
+<div class="container-fluid p-0">
+  <h1 class="h3 mb-3">Cadastrar Audiência</h1>
+
+  <!-- Bloco de pesquisa -->
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+
+        <div *ngIf="pdfGerado" class="d-flex justify-content-end me-3 mb-3">
+          <a [href]="urlBase +'/api/audiencia/export-pdf-audiencia?codigo=' + codigoAudiencia + '&anoBase=' + anoBaseAudiencia"
+            target="_blank" rel="noopener noreferrer" class="btn btn-light bg-white" title="Imprimir PDF">
+            <i class="align-middle me-2 fas fa-print fa-lg"></i> Imprimir audiência
+            {{codigoAudiencia}}/{{anoBaseAudiencia}}
+          </a>
+        </div>
+        <div class="card-body">
+          <div class="mt-3">
+            <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+              class="d-inline-block"></app-spinner>
+
+            <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+              [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+            <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+              [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+
+          </div>
+          <div class="row mb-3 align-items-center">
+            <!-- Pesquisa -->
+            <div class="col-md-4 mb-2 mb-md-0">
+              <div class="input-group input-group-search">
+                <form class="input-group input-group-search" (ngSubmit)="pesquisar()" #formPesquisa="ngForm" novalidate>
+                  <input type="text" class="form-control" name="searchInput"
+                    placeholder="Informe o nº da reclamação ex: (1/2025)" [(ngModel)]="searchInput"
+                    #searchInputModel="ngModel" required minlength="5" maxlength="10" autocomplete="off"
+                    (input)="onSearchInput($event)" (paste)="onPasteOnlyNumbers($event)" />
+                  <button class="btn btn-primary" type="submit" [disabled]="formPesquisa.invalid">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+            <!-- Resultado da pesquisa -->
+            <div class="col-md-8" *ngIf="codigoReclamacao && anoBaseReclamacao && usuarioCadastro">
+              <h5 class="card-title mb-0 d-flex align-items-center flex-wrap">
+                <span>Reclamação <span class="badge badge-subtle-success">{{ codigoReclamacao }}/{{ anoBaseReclamacao
+                    }}</span></span>
+                <span class="mx-2">Cadastrado no dia <span class="badge badge-subtle-success">{{ dataReclamacao | date:
+                    "dd/MM/yyyy 'às' HH:mm" }}</span></span>
+                <span>Pelo atendente: <span class="badge bg-primary">{{ usuarioCadastro }}</span></span>
+                <span>Atendimento <span class="badge badge-subtle-success">{{ codigoAtendimento }}/{{ anoBaseAtendimento
+                    }}</span></span><span class="mx-2">Cadastrado no dia <span class="badge badge-subtle-success">{{
+                    dataAtendimento | date:
+                    "dd/MM/yyyy 'às' HH:mm" }}</span></span>
+                <span>Pelo atendente: <span class="badge bg-primary">{{ usuarioAtendimento
+
+                    }}</span></span>
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="row" *ngIf="codigoReclamacao && anoBaseReclamacao && usuarioCadastro">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="row" *ngIf="codigoReclamacao && anoBaseReclamacao && usuarioCadastro">
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Reclamante(s)</h3>
+
+                  <!-- Lista de representantes fisicos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoReclamantes; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoReclamantes.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat " style="background: #F7931A; color: white;">
+                    <i class="fas fa-frown-open "></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--REPRESENTANTESE FISICOS-->
+
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Representante(s)</h3>
+
+                  <!-- Lista de representantes fisicos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoRepresentanteAtendimentoFisico; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoRepresentanteAtendimentoFisico.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #345D9D; color: white;">
+                    <i class="fas fa-user-friends"></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--RECLAMDAS-->
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Reclamada(s)</h3>
+
+                  <!-- Lista de representantes fisicos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoReclamadas; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoReclamadas.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #627EEA; color: white;">
+                    <i class="fas fa-building"></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--REPRESENTANTESE Juridico-->
+
+        <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Representante(s)</h3>
+
+                  <!-- Lista de representantes juridico -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoRepresentanteAtendimentoJuridica; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoRepresentanteAtendimentoJuridica.length }}</span>
+                  </div>
+
+                  <!-- Botão de adicionar -->
+
+                </div>
+
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #FF6600; color: white;">
+                    <i class="fas fa-user-tie"></i>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--ARTIGOS-->
+
+        <div class="col-8 col-sm-8 col-xxl-8 d-flex">
+          <div class="card flex-fill">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h3 class="mb-2 fs-5">Artigos(s)</h3>
+
+                  <!-- Lista de artigos -->
+                  <ul class="list-unstyled ps-0 lista-pequena">
+                    <li *ngFor="let r of grupoArtigos; let i = index" class="px-2 py-1 mb-1">
+                      <span>{{ r }}</span>
+
+                    </li>
+                  </ul>
+
+                  <!-- Total de reclamantes -->
+                  <div class="mb-2 fs-6">
+                    Total: <span class="badge bg-success text-white fs-6">{{
+                      grupoArtigos.length }}</span>
+                  </div>
+
+                </div>
+                <div class="d-inline-block ms-3">
+                  <div class="stat" style="background: #33c307; color: white;">
+                    <i class="fas fa-circle-info"></i>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Card Acordo -->
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Acordo</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="idAcordo" class="form-label">Tipo de Acordo</label>
+                <select id="idAcordo" class="form-control" formControlName="idAcordo">
+                  <option value="" disabled selected>Selecione um tipo</option>
+                  <option *ngFor="let acordo of tiposAcordos" [value]="acordo.idAcordo">{{ acordo.nomeAcordo }}</option>
+                </select>
+              </div>
+
+              <div *ngIf="mostrarCamposExtras" class="row mb-3">
+                <div class="col-md-6">
+                  <label for="prazo" class="form-label">Prazo (quantidade de dias)</label>
+                  <input type="number" id="prazo" class="form-control" formControlName="prazo" />
+                  <div *ngIf="form.get('prazo')?.invalid && form.get('prazo')?.touched" class="text-danger">
+                    Prazo é obrigatório.
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label d-block">Dias</label>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" formControlName="dias" [value]="0" id="diasCorridos" />
+                    <label class="form-check-label" for="diasCorridos">Dias corridos</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" formControlName="dias" [value]="1" id="diasUteis" />
+                    <label class="form-check-label" for="diasUteis">Dias úteis</label>
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div>
+
+            <div *ngIf="mostrarCamposNovaAudiencia" class="row mb-3">
+              <div class="col-md-6">
+                <label for="dataFinal" class="form-label">Dt. nova audiência</label>
+                <input type="date" id="dataFinal" class="form-control" formControlName="dataFinal" />
+                <div *ngIf="form.get('dataFinal')?.invalid && form.get('dataFinal')?.touched" class="text-danger">
+                  Data é obrigatória.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="hora" class="form-label">Hora</label>
+                <input type="time" id="hora" class="form-control" formControlName="hora" />
+                <div *ngIf="form.get('hora')?.invalid && form.get('hora')?.touched" class="text-danger">
+                  Hora é obrigatória.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+      <!-- Card Fato (sempre abaixo) -->
+      <div class="row mt-3" *ngIf="codigoReclamacao && anoBaseReclamacao && usuarioCadastro">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">Descrição do Fato</h5>
+            </div>
+            <div class="card-body">
+              <label for="fato" class="form-label">Descrição do fato</label>
+              <textarea class="form-control" rows="15" formControlName="fato"
+                placeholder="Descreva o fato ocorrido..."></textarea>
+              <div *ngIf="form.get('fato')?.touched && form.get('fato')?.invalid" class="text-danger mt-1">
+                <span *ngIf="form.get('fato')?.hasError('required')">A informação do fato é obrigatória.</span>
+              </div>
+
+              <div class="mt-3 text-end">
+                <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                  <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>

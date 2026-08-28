@@ -1,0 +1,266 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3">Editar Triagem</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">Formulário</h5>
+                    <button class="btn btn-light bg-white" type="button" data-bs-toggle="modal"
+                        data-bs-target="#modalHistorico" (click)="abrirModalHistorico()">
+                        <i class="fas fa-history me-1"></i> Ver histórico
+                    </button>
+                    <!-- Modal de Histórico da Triagem -->
+                    <div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="modalHistoricoLabel">
+  <ng-container *ngIf="codigoTriagem && anoBaseTriagem; else semHistorico">
+    Histórico de Edição da Triagem -
+    <strong>{{ codigoTriagem }}/{{ anoBaseTriagem }}</strong>
+  </ng-container>
+</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Fechar"></button>
+                                </div>
+                              <div class="modal-body">
+                                
+<ng-container *ngIf="historicoTriagem.length > 0; else semHistorico">
+  <div *ngFor="let item of historicoTriagem" class="border rounded p-3 mb-3">
+<dl class="row">
+
+     <dt class="col-sm-3">Nome do Reclamante:</dt>
+  <dd class="col-sm-9">{{ item.reclamanteNome || 'Não informado' }}</dd>
+
+  <dt class="col-sm-3">CPF:</dt>
+  <dd class="col-sm-9">{{ item.reclamanteCpf || 'Não informado' }}</dd>
+
+  <dt class="col-sm-3">Empresa:</dt>
+  <dd class="col-sm-9">{{ item.reclamadaNome || 'Não informado' }}</dd>
+
+  <dt class="col-sm-3">CNPJ:</dt>
+  <dd class="col-sm-9">{{ item.reclamadaCnpj || 'Não informado' }}</dd>
+  <hr />
+  <dt class="col-sm-3">Data da editção:</dt>
+  <dd class="col-sm-9">{{ item.DataAtualizacao | date:'dd/MM/yyyy HH:mm' }}</dd>
+
+  <dt class="col-sm-3">Usuário que fez a edição:</dt>
+  <dd class="col-sm-9">{{ item.nomeUsuario }}</dd>
+<hr />
+  <dt class="col-sm-3">Orientação data ao reclamante:</dt>
+  <dd class="col-sm-9">{{ item.Orientacao }}</dd>
+
+  <dt class="col-sm-3">Tipo de triagem:</dt>
+  <dd class="col-sm-9">
+    <ng-container [ngSwitch]="item.nomeTipoTriagem?.toLowerCase()">
+    <span *ngSwitchCase="'atendimento'" class="badge bg-warning mb-1">Atendimento</span>
+    <span *ngSwitchCase="'reclamação'" class="badge bg-success mb-1">Reclamação</span>
+    <span *ngSwitchCase="'orientação'" class="badge bg-info mb-1">Orientação</span>
+    <span *ngSwitchDefault class="badge bg-secondary mb-1">{{ item.nomeTipoTriagem || 'Não informado' }}</span>
+  </ng-container>
+  </dd>
+
+ 
+    <dt class="col-sm-3">Motivo da Edição:</dt>
+  <dd class="col-sm-9">{{ item.Observacoes|| 'Não informado' }}</dd>
+</dl>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h6>Dados Antes</h6>
+        <table class="table table-sm table-bordered">
+          <tbody>
+            <tr>
+              <th>Orientação</th>
+              <td>{{ item.DadosAntesObj?.Orientacao || 'Não informado' }}</td>
+            </tr>          
+            <tr>
+              <th>Data de Atualização</th>
+              <td>{{ item.DadosAntesObj?.DataAtualizacao ? (item.DadosAntesObj?.DataAtualizacao | date:'dd/MM/yyyy HH:mm') : 'Não informado' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-6">
+        <h6>Dados Depois</h6>
+        <table class="table table-sm table-bordered">
+          <tbody>
+            <tr>
+              <th>Orientação</th>
+              <td>{{ item.DadosDepoisObj?.Orientacao || 'Não informado' }}</td>
+            </tr>
+         
+            <tr>
+              <th>Data de Atualização</th>
+              <td>{{ item.DadosDepoisObj?.DataAtualizacao ? (item.DadosDepoisObj?.DataAtualizacao | date:'dd/MM/yyyy HH:mm') : 'Não informado' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #semHistorico>
+  <div class="alert alert-warning">Nenhum histórico encontrado.</div>
+</ng-template>
+
+
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body">
+
+                    <div class="mt-3">
+                        <!-- Spinner alinhado à esquerda -->
+                        <app-spinner *ngIf="carregando" [show]="true" message="Salvando triagem..."
+                            class="d-inline-block">
+                        </app-spinner>
+
+                        <!-- Alertas ocupando 100% da largura -->
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+                        </app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+                        </app-alerts>
+                    </div>
+
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+                        <div class="row">
+                            <!-- Reclamante -->
+                            <div class="mb-3 col-md-4 position-relative">
+                                <label class="form-label" for="pessoaInput">Reclamante(s)</label>
+
+                                <input type="text" id="pessoaInput" class="form-control" placeholder="Digite o nome"
+                                    autocomplete="off" formControlName="reclamante"
+                                    (focus)="mostrarSugestoesPessoaFisica = true" (blur)="ocultarSugestoesComDelay()" />
+
+                                <div class="text-danger" *ngIf="form.get('reclamante')?.touched">
+
+                                    <span *ngIf="form.get('reclamante')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+
+                                </div>
+                                <ul *ngIf="mostrarSugestoesPessoaFisica && pessoasFiltradas.length > 0"
+                                    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                                    <li *ngFor="let pessoa of pessoasFiltradas"
+                                        class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                                        (click)="selecionarPessoa(pessoa)">
+                                        {{ pessoa.nome }} <i class="fas fa-fw fa-plus-square text-success"></i>
+                                    </li>
+                                </ul>
+
+                                <div *ngIf="pessoaSelecionada" class="form-text text-success">
+                                    <br />
+                                    <h6 class="card-subtitle text-muted">Pessoa selecionada:</h6>
+                                    <p>{{ pessoaSelecionada.nome }} - CPF: {{ pessoaSelecionada.cpf }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Reclamadas -->
+                            <div class="mb-3 col-md-4 position-relative">
+                                <label class="form-label" for="pessoaJuridicaInput">Reclamada(s)</label>
+                                <input type="text" id="pessoaJuridicaInput" class="form-control"
+                                    placeholder="Digite o nome" autocomplete="off"
+                                    [formControl]="pessoaJuridicaNomeControl"
+                                    (focus)="mostrarSugestoesPessoaJuridica = true"
+                                    (blur)="ocultarSugestoesComDelayPessoaJuridica()" />
+                                <div class="text-danger" *ngIf="form.get('pessoaJuridicaNomeControl')?.touched">
+
+                                    <span *ngIf="form.get('pessoaJuridicaNomeControl')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+
+                                </div>
+                                <ul *ngIf="mostrarSugestoesPessoaJuridica && pessoasJuridicasFiltradas.length > 0"
+                                    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                                    <li *ngFor="let p of pessoasJuridicasFiltradas"
+                                        class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                                        (click)="selecionarPessoaJuridica(p)">
+                                        {{ p.nome }} <i class="fas fa-fw fa-plus-square text-success"></i>
+                                    </li>
+                                </ul>
+
+                                <div *ngIf="pessoaJuridicaSelecionada" class="form-text text-success">
+                                    <br />
+                                    <h6 class="card-subtitle text-muted">Empresa selecionada:</h6>
+                                    <p>{{ pessoaJuridicaSelecionada.nome }} - CNPJ: {{ pessoaJuridicaSelecionada.cnpj }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Tipo de Triagem -->
+                            <div class="mb-3 col-md-4">
+                                <label for="selectTipoTriagem" class="form-label">Tipo de Triagem</label>
+                                <select id="selectTipoTriagem" class="form-control" formControlName="idTipoTriagem">
+                                    <option value="" disabled>Escolha o tipo de triagem</option>
+                                    <option *ngFor="let tipo of tiposTriagem" [value]="tipo.idTipoTriagem">
+                                        {{ tipo.nomeTipoTriagem }}
+                                    </option>
+                                </select>
+                                <div class="text-danger" *ngIf="form.get('idTipoTriagem')?.touched">
+
+                                    <span *ngIf="form.get('idTipoTriagem')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orientação -->
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label" for="orientacao">Orientação</label>
+                                <textarea id="orientacao" formControlName="orientacao" class="form-control"
+                                    placeholder="Descreva a orientação" rows="3"></textarea>
+                                <div class="text-danger" *ngIf="form.get('orientacao')?.touched">
+
+                                    <span *ngIf="form.get('orientacao')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+                                    <span *ngIf="form.get('orientacao')?.hasError('minlength')">
+                                        O nome do tipo de triagem deve ter no mínimo 4 caracteres.
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div *ngIf="!pessoaSelecionada && form.get('idPessoa')?.touched" class="text-danger">
+                            É necessário selecionar uma pessoa da lista.
+                        </div>
+
+                        <!-- Observações da Edição -->
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label" for="observacoes">Motivo da edição (obrigatório)</label>
+                                <textarea id="observacoes" formControlName="observacoes" class="form-control"
+                                    placeholder="Informe o motivo da alteração" rows="3"></textarea>
+                                <div class="text-danger"
+                                    *ngIf="form.get('observacoes')?.touched && form.get('observacoes')?.hasError('required')">
+                                    É obrigatório informar o motivo da alteração.
+                                </div>
+                            </div>
+                        </div>
+ <div class="mt-3">
+                       <button type="submit" class="btn btn-primary" [disabled]="form.get('observacoes')?.invalid">
+  <i class="align-middle me-2 fas fa-save fa-lg"></i> Editar
+</button>
+    </div>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,301 @@
+<nav class="navbar navbar-expand navbar-bg">
+
+    <a class="sidebar-toggle">
+        <i class="hamburger align-self-center"></i>
+    </a>
+
+    <div class="navbar-collapse collapse">
+
+        <ul class="navbar-nav navbar-align">
+
+            <!-- ========================= -->
+            <!-- 🔔 NOTIFICAÇÕES -->
+            <!-- ========================= -->
+
+            <li class="nav-item dropdown">
+
+                <a
+                    class="nav-icon dropdown-toggle"
+                    href="#"
+                    id="notifDropdown"
+                    data-bs-toggle="dropdown"
+                    (click)="$event.preventDefault()">
+
+                    <div class="position-relative">
+
+                        <i
+                            class="fas fa-bell align-middle text-body">
+                        </i>
+
+                        <span
+                            *ngIf="naoLidas > 0"
+                            class="indicator bg-danger text-white">
+
+                            {{ naoLidas }}
+
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+                <div
+                    class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
+                    aria-labelledby="notifDropdown">
+
+                    <!-- HEADER -->
+
+                    <div class="dropdown-menu-header">
+
+                        <div class="position-relative">
+
+                            {{ naoLidas }} Notificação(ões)
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SEM NOTIFICAÇÕES -->
+
+                    <div
+                        *ngIf="!notificacoes?.length"
+                        class="p-3 text-center text-muted">
+
+                        Nenhuma notificação encontrada
+
+                    </div>
+
+
+                    <!-- LISTA DE NOTIFICAÇÕES -->
+
+                    <div
+                        class="list-group"
+                        *ngIf="notificacoes.length > 0">
+
+                        <div
+                            class="list-group-item list-group-item-action"
+                            *ngFor="let item of notificacoes"
+                            (click)="marcarComoLida(item)"
+                            style="cursor: pointer;">
+
+                            <div
+                                class="row g-0 align-items-center">
+
+                                <!-- ÍCONE -->
+
+                                <div
+                                    class="col-2 text-center">
+
+                                    <div
+                                        class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto"
+                                        style="width: 40px; height: 40px;">
+
+                                        <i
+                                            class="fas fa-bell text-white">
+                                        </i>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- CONTEÚDO -->
+
+                                <div
+                                    class="col-10 ps-2">
+
+                                    <div>
+
+                                        <strong>
+                                            {{ item.titulo }}
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div
+                                        class="text-muted small">
+
+                                        {{ item.mensagem }}
+
+                                    </div>
+
+
+                                    <div
+                                        class="text-muted small mt-1">
+
+                                        <i
+                                            class="fas fa-clock me-1">
+                                        </i>
+
+                                        {{
+                                            item.dataCriacao
+                                            | date:'dd/MM/yyyy HH:mm'
+                                        }}
+
+                                    </div>
+
+
+                                    <span
+                                        class="badge mt-1"
+                                        [ngClass]="
+                                            item.lida
+                                                ? 'bg-secondary'
+                                                : 'bg-danger'
+                                        ">
+
+                                        {{
+                                            item.lida
+                                                ? 'Lida'
+                                                : 'Nova'
+                                        }}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </li>
+
+
+            <!-- ========================= -->
+            <!-- 🌙 TEMA -->
+            <!-- ========================= -->
+
+            <li
+                class="nav-item nav-theme-toggle dropdown">
+
+                <a
+                    class="nav-icon js-theme-toggle"
+                    href="#"
+                    (click)="toggleTheme(); $event.preventDefault()">
+
+                    <div
+                        class="position-relative">
+
+                        <i
+                            class="align-middle text-body nav-theme-toggle-light fas fa-fw fa-sun">
+                        </i>
+
+                        <i
+                            class="align-middle text-body nav-theme-toggle-dark fas fa-fw fa-moon">
+                        </i>
+
+                    </div>
+
+                </a>
+
+            </li>
+
+
+            <!-- ========================= -->
+            <!-- 👤 USUÁRIO -->
+            <!-- ========================= -->
+
+            <li
+                class="nav-item dropdown">
+
+                <!-- MOBILE -->
+
+                <a
+                    class="nav-icon dropdown-toggle d-inline-block d-sm-none"
+                    href="#"
+                    data-bs-toggle="dropdown"
+                    (click)="$event.preventDefault()">
+
+                    <i
+                        class="align-middle"
+                        data-lucide="settings">
+                    </i>
+
+                </a>
+
+
+                <!-- DESKTOP -->
+
+                <a
+                    class="nav-link dropdown-toggle d-none d-sm-inline-block"
+                    href="#"
+                    data-bs-toggle="dropdown"
+                    (click)="$event.preventDefault()">
+
+                    <img
+                        [src]="fotoUsuario"
+                        (error)="fotoUsuario='assets/appprocon/img/default-avatar.jpg'"
+                        alt="Foto do usuário"
+                        class="img-fluid rounded-circle border border-light border-2 me-1 mt-n2 mb-n2"
+                        style="
+                            width: 40px;
+                            height: 40px;
+                            object-fit: cover;
+                        ">
+
+                    <span>
+
+                        {{
+                            nomeUsuario
+                                .split(' ')[0]
+                        }}
+
+                    </span>
+
+                </a>
+
+
+                <!-- MENU USUÁRIO -->
+
+                <div
+                    class="dropdown-menu dropdown-menu-end">
+
+                    <a
+                        class="dropdown-item"
+                        [routerLink]="[
+                            '/admin',
+                            'perfil'
+                        ]">
+
+                        <i
+                            class="fa-solid fa-user me-2">
+                        </i>
+
+                        Perfil
+
+                    </a>
+
+
+                    <div
+                        class="dropdown-divider">
+                    </div>
+
+
+                    <button
+                        class="dropdown-item"
+                        type="button"
+                        (click)="logout()">
+
+                        <i
+                            class="fa-solid fa-right-from-bracket me-2">
+                        </i>
+
+                        Sair do sistema
+
+                    </button>
+
+                </div>
+
+            </li>
+
+        </ul>
+
+    </div>
+
+</nav>

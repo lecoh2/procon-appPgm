@@ -1,0 +1,402 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3">Editar Notificação/Intimação | Nº PA<span class="badge badge-subtle-success">{{
+            NotificacaoFormatado}}</span></h1>
+    <span class="mx-2">Cadastrado no dia <span class="badge badge-subtle-success">{{ dataCadastro | date:
+            "dd/MM/yyyy 'às' HH:mm" }}</span></span> <span>Pelo atendente: <span class="badge badge-subtle-primary">{{
+            usuarioNomeAtendimento }} </span></span><br>
+    <span style="margin-left: 8px;"> Nº do Atendimento: <span
+            class="badge badge-subtle-primary">{{codigoAtendimento}}/{{anoBaseAtendimento}}</span></span>
+    <span> Nº Reclamação: <span class="badge badge-subtle-info">{{codigoReclamacao}}/{{anoBaseReclamacao}}</span></span>
+ <span> nº Notificação: <span class="badge badge-subtle-warning">{{codigo}}/{{anoBase}}</span></span>
+
+    <div class="d-flex justify-content-end me-3 mb-3">
+        <button class="btn btn-light bg-white" type="button" data-bs-toggle="modal" data-bs-target="#modalHistorico"
+            (click)="abrirModalHistorico()">
+            <i class="fas fa-history me-1"></i> Ver histórico
+        </button>
+    </div>
+
+    <!-- Bloco de pesquisa -->
+    <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..." class="d-inline-block"></app-spinner>
+
+    <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+        [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+    <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!" [mensagens]="mensagemErro"
+        tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+
+    <!-- Formulário -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row">
+            <!-- Reclamantes -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Reclamante(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoReclamantesAtendimento; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}
+                                    </li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoReclamantesAtendimento.length
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #F7931A; color: white;">
+                                    <i class="fas fa-frown-open"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representantes Físicos -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Representante(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoRepresentanteAtendimentoFisico; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}</li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoRepresentanteAtendimentoFisico.length }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #345D9D; color: white;">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reclamadas -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Reclamada(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoReclamadasAtendimento; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}
+                                    </li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoReclamadasAtendimento.length
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #627EEA; color: white;">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representantes Jurídicos -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Representante(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoRepresentanteAtendimentoJuridica; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}</li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoRepresentanteAtendimentoJuridica.length }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #FF6600; color: white;">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Número do Processo Administrativo -->
+           <div class="col-lg-6">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Processo Administrativo</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="numeroProcesso" class="form-label">
+          Número do Processo Administrativo (com ano)
+        </label>
+
+     <input
+  type="text"
+  id="numeroProcessoCompleto"
+  class="form-control"
+  placeholder="Ex: 123/123470/2025"
+  formControlName="numeroProcessoCompleto"
+  (input)="onPaCompletoInput($event)"
+  autocomplete="off"
+  inputmode="numeric"
+  pattern="[0-9/]*"
+  maxlength="15"
+  (paste)="onPasteOnlyNumbers($event)"
+/>
+
+
+        <!-- Erro obrigatório -->
+        <div
+          *ngIf="form.get('numeroProcessoCompleto')?.touched && form.get('numeroProcessoCompleto')?.hasError('required')"
+          class="text-danger mt-1"
+        >
+          <small>
+            O número do Processo Administrativo é obrigatório.
+          </small>
+        </div>
+
+        <!-- Ajuda enquanto digita -->
+        <div
+          *ngIf="form.get('numeroProcessoCompleto')?.valid && (form.get('numeroProcessoCompleto')?.value?.length ?? 0) < 15"
+          class="text-muted mt-1"
+        >
+          <small>
+            Formato esperado: <strong>000/000000/0000</strong>
+          </small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+            <!-- Localização -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Intimação/Norificacao</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="tipoNotificacao" class="form-label">Selecione</label>
+                            <select class="form-control" formControlName="tipoNotificacao" id="tipoNotificacao">
+                                <option [ngValue]="null" disabled>Selecione o tipo</option>
+                                <option [ngValue]="1">Intimação</option>
+                                <option [ngValue]="2">Notificação</option>
+                            </select>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label for="texto" class="form-label">Descrição da intimação/notificação</label>
+                <textarea class="form-control" rows="15" formControlName="texto"
+                placeholder="Descreva o fato ocorrido..."></textarea>
+                <div *ngIf="form.get('texto')?.touched && form.get('texto')?.invalid" class="text-danger">
+                    <span *ngIf="form.get('texto')?.hasError('required')">A descrição é obrigatória.</span>
+                </div>
+            </div>
+            <div class="col-md-12 mb-4">
+                <label class="form-label" for="motivo">Motivo da Edição</label>
+                <textarea id="observacoes" formControlName="observacoes" class="form-control"
+                    placeholder="Descreva o motivo da edição" rows="3"></textarea>
+                <div class="text-danger" *ngIf="form.get('motivo')?.touched">
+
+                    <span *ngIf="form.get('observacoes')?.hasError('required')">
+                        O motivo da edção é obrigatorio.
+                    </span>
+                    <span *ngIf="form.get('observacoes')?.hasError('minlength')">
+                        o motivo da edição deve ter no mínimo 20 caracteres.
+                    </span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+
+    <!-- Modal de Histórico da Reclamação -->
+    <div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalHistoricoLabel">
+
+                        Histórico da Notificação Intimação <span class="badge badge-subtle-success me-1">{{
+                            form.value.numeroProcessoCompleto}}</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <ng-container *ngIf="historiconotificacao.length > 0; else semHistorico">
+                        <div *ngFor="let item of historiconotificacao" class="border rounded p-3 mb-4">
+
+                            <dl class="row">
+                                <dt class="col-sm-3">Usuário que fez a edição:</dt>
+                                <dd class="col-sm-9">{{ item.nomeUsuario || 'Não informado' }}</dd>
+
+                                <dt class="col-sm-3">Data da edição:</dt>
+                                <dd class="col-sm-9">{{ item.dataAlteracao | date:'dd/MM/yyyy HH:mm' }}</dd>
+
+                                <dt class="col-sm-3">Tipo de alteração:</dt>
+                                <dd class="col-sm-9">{{ item.tipoAlteracao || 'Não informado' }}</dd>
+
+                                <dt class="col-sm-3">Observações:</dt>
+                                <dd class="col-sm-9">{{ item.observacoes || 'Não informado' }}</dd>
+                            </dl>
+
+                            <div class="row">
+                                <!-- Dados Antes -->
+                                <!-- Dados Antes -->
+                                <div class="col-md-6">
+                                    <h6>Dados Antes</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>Nº da Notificação/Intimação</th>
+                                                <td>{{ item.dadosAntesObj?.ControleNotificacao?.Codigo || 'Não
+                                                    informado'
+                                                    }}/{{ item.dadosAntesObj?.ControleNotificacao?.AnoBase || 'Não
+                                                    informado' }}</td>
+                                            </tr>
+                                         
+                                            <tr>
+                                                <th>Nª do Proceso Administrativo</th>
+                                                <td>{{ item.dadosAntesObj?.NumeroProcesso || 'Não informado' }}/{{
+                                                    item.dadosAntesObj?.AnoProcesso || 'Não informado' }}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Tipo</th>
+                                                
+                                                <td>
+                                                    <span *ngIf="item.dadosAntesObj?.TipoNotificacao === 1"
+                                                        class="badge badge-subtle-danger">
+                                                        Intimação
+                                                    </span>
+                                                    <span *ngIf="item.dadosAntesObj?.TipoNotificacao === 2"
+                                                        class="badge badge-subtle-primary">
+                                                        Notificação
+                                                    </span>
+                                                    <span
+                                                        *ngIf="!item.dadosAntesObj?.TipoNotificacao || (item.dadosAntesObj?.TipoNotificacao !== 1 && item.dadosAntesObj?.TipoNotificacao !== 2)">
+                                                        Não informado
+                                                    </span>
+                                                </td>
+
+
+
+
+                                            </tr>
+                                            <tr>
+                                                <th>Descrição</th>
+
+                                                <td [innerHTML]="item.dadosAntesObj?.Texto || 'Não informado'">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Usuário</th>
+                                                <td>
+                                                    {{ item.dadosAntesObj?.Usuario?.NomePessoa || 'Não informado' }}
+                                                    <small *ngIf="item.dadosAntesObj?.Usuario?.Login"
+                                                        class="text-muted">
+                                                        ({{ item.dadosAntesObj.Usuario.Login }})
+                                                    </small>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div> <!-- Dados Depois -->
+                                <div class="col-md-6">
+                                    <h6>Dados Depois</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>Nº da Reclamação</th>
+                                                <td>{{ item.dadosDepoisObj?.ControleNotificacao?.Codigo || 'Não
+                                                    informado' }}/{{ item.dadosDepoisObj?.ControleNotificacao?.AnoBase
+                                                    ||
+                                                    'Não informado' }}</td>
+                                            </tr>
+                                         
+                                            <tr>
+                                                <th>Nº Processo Administrativo</th>
+                                                <td>{{ item.dadosDepoisObj?.NumeroProcesso || 'Não informado' }}/{{
+                                                    item.dadosDepoisObj?.AnoProcesso || 'Não informado' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <td>
+                                                    <span *ngIf="item.dadosDepoisObj?.TipoNotificacao === 1"
+                                                        class="badge badge-subtle-danger">
+                                                        Intimação
+                                                    </span>
+                                                    <span *ngIf="item.dadosDepoisObj?.TipoNotificacao === 2"
+                                                        class="badge badge-subtle-primary">
+                                                        Notificação
+                                                    </span>
+                                                    <span
+                                                        *ngIf="!item.dadosDepoisObj?.TipoNotificacao || (item.dadosAntesObj?.TipoNotificacao !== 1 && item.dadosAntesObj?.TipoNotificacao !== 2)">
+                                                        Não informado
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Descrição</th>
+                                                <td [innerHTML]="item.dadosDepoisObj?.Texto || 'Não informado'"> </td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Usuário</th>
+                                                <td>
+                                                    {{ item.dadosDepoisObj?.Usuario?.NomePessoa || 'Não informado' }}
+                                                    <small *ngIf="item.dadosDepoisObj?.Usuario?.Login"
+                                                        class="text-muted">
+                                                        ({{ item.dadosDepoisObj.Usuario.Login }})
+                                                    </small>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </ng-container>
+
+                    <ng-template #semHistorico>
+                        <div class="alert alert-warning">Nenhum histórico encontrado para esta reclamação.</div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

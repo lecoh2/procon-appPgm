@@ -1,0 +1,173 @@
+.kanban-coluna {
+  min-height: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.kanban-card {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+/* =========================
+   BADGES POR TIPO
+========================= */
+.badge-tarefa {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.badge-prazo {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.badge-audiencia {
+  background-color: #8e44ad;
+  color: #fff;
+}
+
+/* =========================
+   BOOTSTRAP MODAL AJUSTES
+   (opcional, só refinamento visual)
+========================= */
+.modal-content {
+  border-radius: 12px;
+}
+
+.modal-header {
+  border-bottom: 1px solid #eee;
+}
+
+.modal-body {
+  padding: 16px;
+}
+
+/* spinner alinhado */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  width: 800px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}.comentarios-box {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.comentario-item {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.comentario-item:hover {
+  background: #eef2f6;
+}
+
+
+
+/**/
+.comment-card {
+
+  border: 3px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.comment-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #444;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+
+/*hisorico*/
+.change-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 600;
+  min-width: 80px;
+}
+
+/* 🔴 ANTES (vermelho riscado) */
+.old-badge {
+  background-color: #f8d7da;
+  color: #842029;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+/* 🟢 DEPOIS (verde destaque) */
+.new-badge {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  font-weight: 600;
+}
+
+/* ➡️ Ícone */
+.arrow-icon {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.dropdown a {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  min-width: 160px;
+}.header-afazer {
+  background-color: #6c757d !important;
+  color: #ffffff !important;
+}
+
+.header-afazer h5,
+.header-afazer span,
+.header-afazer  {
+  color: #ffffff !important;
+}

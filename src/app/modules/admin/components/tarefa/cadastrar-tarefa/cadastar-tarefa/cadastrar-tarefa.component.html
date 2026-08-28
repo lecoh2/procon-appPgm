@@ -1,0 +1,199 @@
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Cadastrar Tarefa</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Nova Tarefa</h5>
+            <h6 class="card-subtitle text-muted">Preencha os dados</h6>
+        </div>
+
+        <div class="card-body">
+<div class="alert alert-primary border-0 shadow-sm d-flex align-items-center p-3 mb-4 rounded-3 alert-dismissible fade show"
+    role="alert">
+
+    <div class="me-3">
+        <i class="fas fa-circle-info fs-4 text-white bg-primary rounded-circle p-2"></i>
+    </div>
+
+    <div class="flex-grow-1">
+          <h6 class="fw-bold mb-0">
+               Preencha os campos marcados com <strong>*</strong>. Os demais são opcionais.
+        </h6>
+    </div>
+
+    <button type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close">
+    </button>
+
+</div>
+             <div class="mt-3">
+                <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+                  class="d-inline-block"></app-spinner>
+
+                <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                  [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+                <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                  [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+              </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <!-- ETIQUETAS -->
+                <div class="mb-3">
+                    <label class="form-label">Etiquetas</label>
+                    <app-etiquetas [etiquetas]="grupoTarefasEtiquetas" [(selecionadas)]="etiquetasSelecionadas">
+                    </app-etiquetas>
+                </div>
+                <!-- DESCRIÇÃO -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Descrição *</label>
+                        <textarea class="form-control" formControlName="descricao"></textarea>
+                    </div>
+                    <div *ngIf="form.get('descricao')?.touched && form.get('descricao')?.invalid"
+                        class="text-danger mt-1">
+                        <span *ngIf="form.get('descricao')?.hasError('required')">A Descrição da tarefa é
+                            obrigatória.</span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <!-- DATA -->
+                    <div class="col-md-6">
+                        <label class="form-label">Data da tarefa *</label>
+                        <input type="date" class="form-control" formControlName="dataTarefa">
+                    </div>
+                    <div *ngIf="form.get('dataTarefa')?.touched && form.get('dataTarefa')?.invalid"
+                        class="text-danger mt-1">
+                        <span *ngIf="form.get('dataTarefa')?.hasError('required')">A data da tarrefa é
+                            obrigatória.</span>
+                    </div>
+                    <!-- RESPONSÁVEL -->
+                    <div class="col-md-4">
+                        <label class="form-label">Responsável </label>
+                        <app-selecionar-responsaveis [resultados]="responsaveisFiltrados"
+                            [(selecionadas)]="responsaveisSelecionados" (buscar)="buscarResponsaveis($event)">
+                        </app-selecionar-responsaveis>
+                    </div>
+                    <div *ngIf="responsaveisSelecionados.length === 0 && form.get('responsavelId')?.touched"
+                        class="text-danger mt-1">
+                        <span>Selecione pelo menos um responsável para a tarefa.</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- STATUS -->
+                    <div class="col-md-6">
+                        <label class="form-label">Status *</label>
+                        <select class="form-select" formControlName="statusGeralKanban">
+                            <option [ngValue]="statusEnum.A_Fazer">A Fazer</option>
+                            <option [ngValue]="statusEnum.Em_Andamento">Em Andamento</option>
+                            <option [ngValue]="statusEnum.Concluido">Concluído</option>
+                            <option [ngValue]="statusEnum.Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div *ngIf="form.get('statusGeralKanban')?.touched && form.get('statusGeralKanban')?.invalid"
+                        class="text-danger mt-1">
+                        <span *ngIf="form.get('statusGeralKanban')?.hasError('required')">Escolha um status para a
+                            tarefa.</span>
+                    </div>
+                    <!-- PRIORIDADE -->
+                    <div class="col-md-6">
+                        <label class="form-label">Prioridade *</label>
+                        <select class="form-select" formControlName="prioridade">
+                            <option [ngValue]="prioridadeEnum.Baixa">Baixa</option>
+                            <option [ngValue]="prioridadeEnum.Media">Média</option>
+                            <option [ngValue]="prioridadeEnum.Alta">Alta</option>
+                            <option [ngValue]="prioridadeEnum.Urgente">Urgente</option>
+                        </select>
+                    </div>
+                    <div *ngIf="form.get('prioridade')?.touched && form.get('prioridade')?.invalid"
+                        class="text-danger mt-1">
+                        <span *ngIf="form.get('prioridade')?.hasError('required')">Escolha uma prioridade para a
+                            tarefa.</span>
+                    </div>
+                </div>
+
+                <!-- TIPO VÍNCULO -->
+                <div class="row mb-3">
+                    <!-- ITEM DINÂMICO -->
+                    <div class="col-md-6">
+                        <label class="form-label">Vínculo</label>
+                        <select class="form-control" formControlName="tipoVinculo">
+                            <option [ngValue]="null">Selecione</option>                       
+                            <option value="atendimento">Atendimento</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Buscar</label>
+                     <app-vinculo
+  [resultados]="resultadosVinculo"
+  [vinculoSelecionado]="vinculoSelecionado"
+  (buscar)="buscarVinculo($event)"
+  (selecionado)="selecionarVinculo($event)">
+</app-vinculo>
+
+                    </div>
+                </div>
+
+                <!--Lista de tarefas
+                <div class="row mb-3">
+
+                 
+                    <div class="col-12 mb-2">
+
+                        <div class="d-inline-flex align-items-center gap-3">
+
+                            <h5 class="card-title mb-0">
+                                Adicionar uma nova lista de tarefa
+                            </h5>
+
+                            <button type="button" class="btn btn-sm btn-info" (click)="adicionarItemLista()">
+
+                                <i class="fas fa-list me-1"></i>
+                                Adicionar item
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+              
+                    <div class="d-flex flex-column gap-2">
+
+                        <div *ngFor="let item of listasTarefa; let i = index" class="d-flex align-items-center gap-2">
+
+                            <input type="text" class="form-control" [value]="item.descricao"
+                                (input)="atualizarDescricaoLista(i, $any($event.target).value)" />
+
+                            <button type="button" class="btn btn-sm" (click)="removerItemLista(i)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <app-autocomplete-lista-tarefas label="Listas de tarefas existentes"
+                            placeholder="Digite a descrição" [resultados]="listaFiltradas"
+                            [(selecionadas)]="listasTarefa" (buscar)="buscarListaTarefas($event)">
+                        </app-autocomplete-lista-tarefas>
+                    </div>
+                </div> -->
+
+
+                <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>

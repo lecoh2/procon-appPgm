@@ -1,0 +1,122 @@
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Consultar Notificação/Intimação</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title"></h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="mt-3">
+
+                        <!-- Spinner alinhado à esquerda -->
+                        <app-spinner-consulta *ngIf="carregando" [carregando]="true" message="Consultando..."
+                            class="d-inline-block">
+                        </app-spinner-consulta>
+
+
+                        <!-- Alertas ocupando 100% da largura -->
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+                        </app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+                        </app-alerts>
+                    </div>
+
+       <div class="d-flex justify-content-between align-items-center mb-3">
+                        <input type="text" class="form-control form-control-sm w-50"
+                            placeholder="Pesquisar código, reclamante ou reclamada" [(ngModel)]="filtro"
+                            (keyup.enter)="aplicarFiltro()">
+                        <div>
+                            <select class="form-select form-select-sm" [(ngModel)]="tamanhoPagina"
+                                (change)="aplicarFiltro()">
+                                <option *ngFor="let size of [5,10,20,50]" [value]="size">{{ size }} por página</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Tabela Pessoas Físicas -->
+                    <table id="datatables-notificacao" class="table table-striped w-100">
+
+                        <thead>
+                            <tr style="font-size: smaller;">
+                                <th>Nº Notificação/Intimação</th>
+                                <th>Nº do Processo Administratico</th>
+                                <th>Tipo</th>
+                                <th>Data Cadastro</th>
+                                <th class="text-end align-middle">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let notificacao of dataSource.data" style="font-size: smaller;">
+                                <!--td [attr.data-order]="pa.codigo">
+                                    {{ pa.codigo }}/{{ pa.anoBase }}
+                                </td-->
+
+                                <td>
+                                    {{ notificacao.codigo}}/{{notificacao.anoBase}}
+                                </td>
+                                <td>
+                                 
+                                     {{ formatarPaNumero(notificacao.numeroProcesso) }}/{{notificacao.anoProcesso}}
+                                </td>
+
+
+                                 
+                                <td>
+                                    <span *ngIf="notificacao.tipoNotificacao === 1" class="badge badge-subtle-danger">
+                                        Intimação
+                                    </span>
+                                    <span *ngIf="notificacao.tipoNotificacao === 2" class="badge badge-subtle-info">
+                                        Notificação
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ notificacao.dataCadastro | date:'dd/MM/yyyy' }}
+                                </td>
+                                <td class="text-end align-middle">
+                                    <a [routerLink]="['/admin/editar-notificacao', notificacao.idControleNotificacao]"
+                                        title="Editar">
+                                        <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
+                                    </a>
+<a [href]="urlBase +'/api/notificacaointimacao/export-pdf-notificao?codigo=' + notificacao.codigo + '&anoBase=' + notificacao.anoBase"
+                                        target="_blank" rel="noopener noreferrer" class="ms-2" title="Imprimir PDF">
+                                        <i class="align-middle me-2 fas fa-print fa-lg"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      <nav *ngIf="totalPaginas > 1">
+                    <ul class="pagination justify-content-center mt-3">
+                        <li class="page-item" [class.disabled]="paginaAtual === 1">
+                            <a class="page-link" (click)="irParaPagina(1)">Primeira</a>
+                        </li>
+                        <li class="page-item" [class.disabled]="paginaAtual === 1">
+                            <a class="page-link" (click)="irParaPagina(paginaAtual - 1)">Anterior</a>
+                        </li>
+
+                        <li class="page-item" *ngFor="let p of paginasVisiveis" [class.active]="p === paginaAtual">
+                            <a class="page-link" (click)="irParaPagina(p)">{{ p }}</a>
+                        </li>
+
+                        <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+                            <a class="page-link" (click)="irParaPagina(paginaAtual + 1)">Próxima</a>
+                        </li>
+                        <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
+                            <a class="page-link" (click)="irParaPagina(totalPaginas)">Última</a>
+                        </li>
+                    </ul>
+                </nav>
+                <p class="text-end text-muted">Mostrando página {{ paginaAtual }} de {{ totalPaginas }} | Total de
+                    registros: {{
+                    totalRegistros }}</p>
+
+    </div>

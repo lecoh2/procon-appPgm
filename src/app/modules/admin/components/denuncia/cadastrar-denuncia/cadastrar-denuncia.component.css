@@ -1,0 +1,16 @@
+/* Sugestões sempre acima de tudo */
+.zindex-dropdown {
+    position: absolute;
+    z-index: 1050; /* maior que o do editor */
+}
+
+/* Editor Quill */
+#editorContainer {
+    position: relative;
+    z-index: 1; /* menor que os autocompletes */
+}
+
+/* Espaçamento entre inputs e editor */
+#editorContainer {
+    margin-top: 20px;
+}

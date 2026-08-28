@@ -1,0 +1,144 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3">Cadastro do tipo de Triagem</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Formulário</h5>
+
+                </div>
+                <div class="card-body">
+
+                    <div class="mt-3">
+                        <!-- Spinner alinhado à esquerda -->
+                        <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+                            class="d-inline-block">
+                        </app-spinner>
+
+                        <!-- Alertas ocupando 100% da largura -->
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+                        </app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+                        </app-alerts>
+                    </div>
+
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user">
+                        <div class="row">
+                            <!-- Reclamante -->
+                            <div class="mb-3 col-md-4 position-relative">
+                                <label class="form-label" for="pessoaInput">Reclamante(s)</label>
+
+                                <input type="text" id="pessoaInput" class="form-control" placeholder="Digite o nome"
+                                    autocomplete="off" formControlName="reclamante"
+                                    (focus)="mostrarSugestoesPessoaFisica = true" (blur)="ocultarSugestoesComDelay()" />
+
+                                <div class="text-danger" *ngIf="form.get('reclamante')?.touched">
+
+                                    <span *ngIf="form.get('reclamante')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+
+                                </div>
+                                <ul *ngIf="mostrarSugestoesPessoaFisica && pessoasFiltradas.length > 0"
+                                    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                                    <li *ngFor="let pessoa of pessoasFiltradas"
+                                        class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                                        (click)="selecionarPessoa(pessoa)">
+                                        {{ pessoa.nome }} <i class="fas fa-fw fa-plus-square text-success"></i>
+                                    </li>
+                                </ul>
+
+                                <div *ngIf="pessoaSelecionada" class="form-text text-success">
+                                    <br />
+                                    <h6 class="card-subtitle text-muted">Pessoa selecionada:</h6>
+                                    <p>{{ pessoaSelecionada.nome }} - CPF: {{ pessoaSelecionada.cpf }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Reclamadas -->
+                            <div class="mb-3 col-md-4 position-relative">
+                                <label class="form-label" for="pessoaJuridicaInput">Reclamada(s)</label>
+                                <input type="text" id="pessoaJuridicaInput" class="form-control"
+                                    placeholder="Digite o nome" autocomplete="off"
+                                    [formControl]="pessoaJuridicaNomeControl"
+                                    (focus)="mostrarSugestoesPessoaJuridica = true"
+                                    (blur)="ocultarSugestoesComDelayPessoaJuridica()" />
+                                <div class="text-danger" *ngIf="form.get('pessoaJuridicaNomeControl')?.touched">
+
+                                    <span *ngIf="form.get('pessoaJuridicaNomeControl')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+
+                                </div>
+                                <ul *ngIf="mostrarSugestoesPessoaJuridica && pessoasJuridicasFiltradas.length > 0"
+                                    class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+                                    <li *ngFor="let p of pessoasJuridicasFiltradas"
+                                        class="list-group-item pessoa-sugestao d-flex justify-content-between align-items-center"
+                                        (click)="selecionarPessoaJuridica(p)">
+                                        {{ p.nome }} <i class="fas fa-fw fa-plus-square text-success"></i>
+                                    </li>
+                                </ul>
+
+                                <div *ngIf="pessoaJuridicaSelecionada" class="form-text text-success">
+                                    <br />
+                                    <h6 class="card-subtitle text-muted">Empresa selecionada:</h6>
+                                    <p>{{ pessoaJuridicaSelecionada.nome }} - CNPJ: {{ pessoaJuridicaSelecionada.cnpj }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Tipo de Triagem -->
+                            <div class="mb-3 col-md-4">
+                                <label for="selectTipoTriagem" class="form-label">Tipo de Triagem</label>
+                                <select id="selectTipoTriagem" class="form-control" formControlName="idTipoTriagem">
+                                    <option value="" disabled>Escolha o tipo de triagem</option>
+                                    <option *ngFor="let tipo of tiposTriagem" [value]="tipo.idTipoTriagem">
+                                        {{ tipo.nomeTipoTriagem }}
+                                    </option>
+                                </select>
+                                <div class="text-danger" *ngIf="form.get('idTipoTriagem')?.touched">
+
+                                    <span *ngIf="form.get('idTipoTriagem')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orientação -->
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label" for="orientacao">Orientação</label>
+                                <textarea id="orientacao" formControlName="orientacao" class="form-control"
+                                    placeholder="Descreva a orientação" rows="3"></textarea>
+                                <div class="text-danger" *ngIf="form.get('orientacao')?.touched">
+
+                                    <span *ngIf="form.get('orientacao')?.hasError('required')">
+                                        O nome do tipo de triagem é obrigatório.
+                                    </span>
+                                    <span *ngIf="form.get('orientacao')?.hasError('minlength')">
+                                        O nome do tipo de triagem deve ter no mínimo 4 caracteres.
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div *ngIf="!pessoaSelecionada && form.get('idPessoa')?.touched" class="text-danger">
+                            É necessário selecionar uma pessoa da lista.
+                        </div>
+                         <div class="mt-3">
+              <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+              </button>
+            </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

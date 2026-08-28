@@ -1,0 +1,75 @@
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Consultar Processo Administrativo</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Para trocar a pesquisa clique na opção desejada</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="mt-3">
+
+                        <!-- Spinner alinhado à esquerda -->
+                        <app-spinner-consulta *ngIf="carregando" [carregando]="true" message="Consultando..."
+                            class="d-inline-block">
+                        </app-spinner-consulta>
+
+
+                        <!-- Alertas ocupando 100% da largura -->
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+                        </app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+                        </app-alerts>
+                    </div>
+
+
+                    <!-- Tabela Pessoas Físicas -->
+                    <table id="datatables-pa" class="table table-striped w-100">
+
+                        <thead>
+                            <tr style="font-size: smaller;">                             
+                                <th>Nº Processo Administrativo</th>
+                                <th>Localização</th>
+                                <th>Data Cadastro</th>
+                                <th class="text-end align-middle">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let pa of consulta" style="font-size: smaller;">
+                                <!--td [attr.data-order]="pa.codigo">
+                                    {{ pa.codigo }}/{{ pa.anoBase }}
+                                </td-->
+
+                                <td>
+                                  {{ formatarPaNumero(pa.paNumero) }}/{{pa.ano}}
+                                </td>
+                                <td>
+                                    {{pa.nomeLocais}}
+                                </td>
+                               
+                                <td>
+                                    {{ pa.dataCadastro | date:'dd/MM/yyyy' }}
+                                </td>
+                                <td class="text-end align-middle">
+                                    <a [routerLink]="['/admin/editar-pa', pa.idPa]" title="Editar">
+                                        <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
+                                    </a>
+                                    <!--a [href]="urlBase +'/api/audiencia/export-pdf-audiencia?codigo=' + pa.codigo + '&anoBase=' + pa.anoBase"
+                                        target="_blank" rel="noopener noreferrer" class="ms-2" title="Imprimir PDF">
+                                        <i class="align-middle me-2 fas fa-print fa-lg"></i>
+                                    </a-->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>

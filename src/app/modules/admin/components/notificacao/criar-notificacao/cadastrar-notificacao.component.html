@@ -1,0 +1,252 @@
+<div class="container-fluid p-0">
+    <h1 class="h3 mb-3">Cadastrar Intimação/Notificação</h1>
+
+    <!-- Bloco de pesquisa -->
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mt-3">
+                        <app-spinner *ngIf="carregando" [show]="true" message="Cadastrando ..."
+                            class="d-inline-block"></app-spinner>
+
+                        <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
+                            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg"></app-alerts>
+
+                        <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
+                            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg"></app-alerts>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <!-- Pesquisa -->
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <div class="input-group input-group-search">
+                                <form class="input-group input-group-search" (ngSubmit)="pesquisar()"
+                                    #formPesquisa="ngForm" novalidate>
+                                    <input type="text" class="form-control" name="searchInput"
+                                        placeholder="Informe o nº da reclamação ex: (1/2025)" [(ngModel)]="searchInput"
+                                        #searchInputModel="ngModel" required minlength="5" maxlength="10"
+                                        autocomplete="off" (input)="onSearchInput($event)"
+                                        (paste)="onPasteOnlyNumbers($event)" />
+                                    <button class="btn btn-primary" type="submit" [disabled]="formPesquisa.invalid">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Resultado da pesquisa -->
+                        <div class="col-md-8" *ngIf="codigoReclamacao && anoBaseReclamacao && usuarioCadastro">
+                            <h5 class="card-title mb-0 d-flex align-items-center flex-wrap">
+                                <span>Reclamação <span class="badge badge-subtle-success">{{ codigoReclamacao }}/{{
+                                        anoBaseReclamacao }}</span></span>
+                                <span class="mx-2">Cadastrado no dia <span class="badge badge-subtle-success">{{
+                                        dataReclamacao | date:"dd/MM/yyyy 'às' HH:mm" }}</span></span>
+                                <span>Pelo atendente: <span class="badge bg-primary">{{ usuarioCadastro }}</span></span>
+                                <span>Atendimento <span class="badge badge-subtle-success">{{ codigoAtendimento }}/{{
+                                        anoBaseAtendimento }}</span></span>
+                                <span class="mx-2">Cadastrado no dia <span class="badge badge-subtle-success">{{
+                                        dataAtendimento | date:"dd/MM/yyyy 'às' HH:mm" }}</span></span>
+                                <span>Pelo atendente: <span class="badge bg-primary">{{ usuarioAtendimento
+                                        }}</span></span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="pdfGerado" class="d-flex justify-content-end me-3 mb-3">
+                  <a [href]="urlBase + '/api/notificacaointimacao/export-pdf-notificao?codigo=' + codigo + '&anoBase=' + anoBase"
+                    target="_blank" rel="noopener noreferrer" class="btn btn-light bg-white" title="Imprimir PDF">
+                    <i class="align-middle me-2 fas fa-print fa-lg"></i>
+                    Imprimir notificação/Intimação {{ codigo }}/{{ anoBase }}
+                  </a>
+                </div>
+    <!-- Formulário -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="codigoReclamacao && anoBaseReclamacao && usuarioCadastro">
+        <div class="row">
+            <!-- Reclamantes -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Reclamante(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoReclamantesAtendimento; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}
+                                    </li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoReclamantesAtendimento.length
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #F7931A; color: white;">
+                                    <i class="fas fa-frown-open"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representantes Físicos -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Representante(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoRepresentanteAtendimentoFisico; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}</li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoRepresentanteAtendimentoFisico.length }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #345D9D; color: white;">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reclamadas -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Reclamada(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoReclamadasAtendimento; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}
+                                    </li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoReclamadasAtendimento.length
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #627EEA; color: white;">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representantes Jurídicos -->
+            <div class="col-12 col-sm-6 col-xxl-3 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="mb-2 fs-5">Representante(s)</h3>
+                                <ul class="list-unstyled ps-0 lista-pequena">
+                                    <li *ngFor="let r of grupoRepresentanteAtendimentoJuridica; let i = index"
+                                        class="px-2 py-1 mb-1">{{ r }}</li>
+                                </ul>
+                                <div class="mb-2 fs-6">
+                                    Total: <span class="badge bg-success text-white fs-6">{{
+                                        grupoRepresentanteAtendimentoJuridica.length }}</span>
+                                </div>
+                            </div>
+                            <div class="d-inline-block ms-3">
+                                <div class="stat" style="background: #FF6600; color: white;">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Número do Processo Administrativo -->
+           <!-- Número do Processo Administrativo -->
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Processo Administrativo</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+          <label for="paCompleto" class="form-label">Número do Processo Administrativo (com ano)</label>
+          <input
+            type="text"
+            id="paCompleto"
+            class="form-control"
+            placeholder="Ex: 123/123470/2025"
+            formControlName="paCompleto"
+            (input)="onPaCompletoInput($event)"
+           
+            autocomplete="off"
+            inputmode="numeric"
+            pattern="[0-9/]*"
+            (paste)="onPasteOnlyNumbers($event)"
+          />
+
+          <div *ngIf="form.get('numeroProcessoCompleto')?.touched && form.get('numeroProcessoCompleto')?.invalid" class="text-danger mt-1">
+            <small *ngIf="form.get('numeroProcessoCompleto')?.hasError('required')">
+              O número do Processo Administrativo é obrigatório.
+            </small>
+          </div>
+
+          <div *ngIf="form.get('numeroProcessoCompleto')?.valid && (form.get('numeroProcessoCompleto')?.value?.length ?? 0) < 20" class="text-muted mt-1">
+            <small>Digite ao menos 8 dígitos numéricos (ex: 12342025).</small>
+          </div>
+        </div>
+      </div>
+
+  
+</div>
+      </div>
+            <!-- Localização -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Intimação/Norificacao</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="tipoNotificacao" class="form-label">Selecione</label>
+                            <select class="form-control" formControlName="tipoNotificacao">
+                                <option [ngValue]="null" disabled selected>Selecione o tipo</option>
+                                <option [ngValue]="1">Intimação</option>
+                                <option [ngValue]="2">Notificação</option>
+                            </select>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label for="texto" class="form-label">Descrição da intimação/notificação</label>
+                <textarea class="form-control" rows="15" formControlName="texto"
+                placeholder="Descreva o fato ocorrido..."></textarea>
+                <div *ngIf="form.get('texto')?.touched && form.get('texto')?.invalid" class="text-danger">
+                    <span *ngIf="form.get('texto')?.hasError('required')">A descrição é obrigatória.</span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar || carregando">
+                    <i class="align-middle me-2 fas fa-save fa-lg"></i> Salvar
+                </button>
+            </div>
+
+        </div>
+    </form>
+</div>

@@ -1,0 +1,11 @@
+.lista-pequena li {
+  display: flex;
+  justify-content: space-between; /* empurra o botão para a ponta direita */
+  align-items: center;            /* centraliza verticalmente o conteúdo */
+  padding: 2px 4px;               /* ajuste fino do padding interno */
+  margin-bottom: 2px;             /* ajuste fino do espaçamento entre itens */
+}
+.lista-pequena li button {
+  margin: 0;       /* remove qualquer margem que o botão tenha */
+  padding: 0;      /* remove padding extra do botão */
+}
