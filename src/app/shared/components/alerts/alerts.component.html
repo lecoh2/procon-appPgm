@@ -1,20 +1,42 @@
-<div *ngIf="mensagens.length > 0"
-     class="alert alert-{{tipo}} alert-outline-coloured alert-dismissible"
-     role="alert">
+<div
+  *ngIf="mensagens.length > 0"
+  class="alert alert-{{ tipo }} alert-outline-coloured alert-dismissible alert-com-progresso"
+  role="alert"
+>
 
-  <button type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-          (click)="fecharMensagem()">
+  <!-- FECHAR -->
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="fecharMensagem()"
+  >
   </button>
 
+  <!-- ÍCONE -->
   <div class="alert-icon">
     <i [ngClass]="icone"></i>
   </div>
 
+  <!-- MENSAGENS -->
   <div class="alert-message">
-    <div *ngFor="let msg of mensagens">{{ msg }}</div>
-  </div>
-</div>
 
+    <div *ngIf="titulo" class="fw-semibold mb-1">
+      {{ titulo }}
+    </div>
+
+    <div *ngFor="let msg of mensagens">
+      {{ msg }}
+    </div>
+
+  </div>
+
+  <!-- BARRA DE CONTAGEM -->
+  <div
+    class="alert-progress"
+    [ngClass]="'alert-progress-' + tipo"
+    [style.animation-duration.ms]="tempoDuracao"
+  >
+  </div>
+
+</div>

@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, ViewChild, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  ViewChild,
+  SimpleChanges,
+  OnChanges,
+  OnDestroy
+} from '@angular/core';
 
 @Component({
   selector: 'app-alerts',
@@ -6,32 +14,129 @@ import { Component, ElementRef, Input, ViewChild, SimpleChanges } from '@angular
   templateUrl: './alerts.component.html',
   styleUrl: './alerts.component.css'
 })
-export class AlertsComponent {
+export class AlertsComponent implements OnChanges, OnDestroy {
 
-  //parâmentros do component
-  @Input() icone: string = ''; // classe do ícone, ex: 'fas fa-check-circle'
+  // =====================================================
+  // INPUTS
+  // =====================================================
+
+  @Input() icone: string = '';
+
   @Input() titulo: string = '';
-  @Input() mensagens: string[] = [];
-  @Input() tipo: 'success' | 'danger' | 'warning' | 'info' = 'success';
 
-  @ViewChild('modalElement') modalElement!: ElementRef;
+  @Input() mensagens: string[] = [];
+
+  @Input() tipo:
+    | 'success'
+    | 'danger'
+    | 'warning'
+    | 'info' = 'success';
+
+
+  // =====================================================
+  // VIEW CHILD
+  // =====================================================
+
+  @ViewChild('modalElement')
+  modalElement!: ElementRef;
+
+
+  // =====================================================
+  // CONTROLE
+  // =====================================================
 
   fading = false;
 
+  // 30 segundos
+  readonly tempoDuracao = 30000;
+
+  private timeoutFade?: ReturnType<typeof setTimeout>;
+
+  private timeoutFechar?: ReturnType<typeof setTimeout>;
+
+
+  // =====================================================
+  // ALTERAÇÃO DAS MENSAGENS
+  // =====================================================
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['mensagens'] && this.mensagens.length > 0) {
-      // Inicia fade após 2s
-      setTimeout(() => {
+
+    if (
+      changes['mensagens'] &&
+      this.mensagens.length > 0
+    ) {
+
+      // Remove qualquer contador anterior
+      this.limparTimers();
+
+      // Reinicia estado
+      this.fading = false;
+
+      // Inicia novo contador
+      this.timeoutFade = setTimeout(() => {
+
         this.fading = true;
-        // Remove após o fade (por exemplo, 0.5s depois)
-        setTimeout(() => {
+
+        // Pequeno tempo para finalizar
+        this.timeoutFechar = setTimeout(() => {
+
           this.fecharMensagem();
+
         }, 100);
-      }, 10000);
+
+      }, this.tempoDuracao);
+
     }
+
   }
-  //função para fechar as mensagens
-  fecharMensagem() {
+
+
+  // =====================================================
+  // FECHAR MENSAGEM
+  // =====================================================
+
+  fecharMensagem(): void {
+
+    this.limparTimers();
+
     this.mensagens = [];
+
   }
+
+
+  // =====================================================
+  // LIMPAR TIMERS
+  // =====================================================
+
+  private limparTimers(): void {
+
+    if (this.timeoutFade) {
+
+      clearTimeout(this.timeoutFade);
+
+      this.timeoutFade = undefined;
+
+    }
+
+    if (this.timeoutFechar) {
+
+      clearTimeout(this.timeoutFechar);
+
+      this.timeoutFechar = undefined;
+
+    }
+
+  }
+
+
+  // =====================================================
+  // DESTRUIR COMPONENTE
+  // =====================================================
+
+  ngOnDestroy(): void {
+
+    this.limparTimers();
+
+  }
+
 }

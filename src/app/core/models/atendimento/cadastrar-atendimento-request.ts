@@ -17,4 +17,5 @@ export interface CadastrarAtendimentoRequest {
   GrupoRepresentantesAtendimentoFisicoRequest: GrupoRepresentanteAtendimentoFisicoRequest[];
   GrupoRepresentantesAtendimentoJuridicoRequest: GrupoRepresentantesAtendimentoJuridicoRequest[];
   GrupoArtigoAtendimentoRequest: GrupoArtigoAtendimentoRequest[];
+  GrupoReclamadasAtendimentoPFRequest: GrupoReclamadasAtendimentoRequest[];
 }

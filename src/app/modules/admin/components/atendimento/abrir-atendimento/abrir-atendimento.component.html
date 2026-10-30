@@ -32,41 +32,7 @@
                     <div class="row">
 
                       <!-- Reclamante (Pessoa Física) -->
-                      <div class="mb-3 col-md-3 position-relative">
-                        <label for="pessoaInput" class="form-label">Reclamante(s)</label>
-                        <input id="pessoaInput" type="text" class="form-control" placeholder="Digite o nome"
-                          autocomplete="off" [formControl]="pessoaFisicaNomeControl"
-                          (focus)="mostrarSugestoesPessoaFisica = true" (blur)="ocultarSugestoesComDelay()" />
-
-                        <!--Sugestões-->
-                        <ul *ngIf="mostrarSugestoesPessoaFisica && pessoasFisicaFiltradas.length > 0"
-                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
-                          <li *ngFor="let pessoa of pessoasFisicaFiltradas"
-                            class="list-group-item d-flex justify-content-between align-items-center hover-click"
-                            (mousedown)="selecionarPessoa(pessoa)">
-                            {{ pessoa.nome }} - CPF: {{ pessoa.cpf }}
-                           <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
-                          </li>
-                        </ul>
-
-                        <!-- Selecionadas-->
-                        <div *ngIf="pessoasSelecionadas.length > 0" class="form-text text-success mt-2">
-                          <h6 class="card-subtitle text-muted">Pessoas selecionadas:</h6>
-                          <ul class="lista-sem-bolinha">
-                            <li *ngFor="let p of pessoasSelecionadas"
-                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
-                              <span class="texto-maior">
-                                <strong>{{ p.nome }}</strong><br />
-                                <small class="text-muted">CPF: {{ p.cpf }}</small>
-                              </span>
-                              <button type="button" class="border-0 bg-transparent p-0"
-                                (click)="removerPessoafisicaSelecionada(p)">
-                                <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
+                     
 <div class="mb-3 col-md-3 position-relative">
 
   <div class="d-flex justify-content-between align-items-center mb-1">
@@ -223,55 +189,114 @@
                       </div>
 
                       <!-- Empresa(s) (Pessoa Jurídica) -->
-                      <div class="mb-3 col-md-3 position-relative">
-                        <label for="pessoaJuridicaInput" class="form-label">Empresa(s)</label>
-                        <input id="pessoaJuridicaInput" type="text" class="form-control" placeholder="Digite o nome"
-                          autocomplete="off" [formControl]="pessoaJuridicaNomeControl"
-                          (focus)="mostrarSugestoesPessoaJuridica = true"
-                          (blur)="ocultarSugestoesComDelayPessoaJuridica()" />
+                  <div class="mb-3 col-md-3 position-relative">
 
-                        <!-- Sugestões -->
-                        <ul *ngIf="mostrarSugestoesPessoaJuridica && pessoasJuridicasFiltradas.length > 0"
-                          class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
-                          <li *ngFor="let pessoa of pessoasJuridicasFiltradas"
-                            class="list-group-item d-flex flex-column justify-content-start align-items-start hover-click"
-                            (mousedown)="selecionarPessoaJuridica(pessoa)">
-                            <div class="w-100 d-flex justify-content-between align-items-center">
-                              <span>
-                                {{ pessoa.nome }} - CNPJ: {{ pessoa.cnpj }}<br />
-                                <small class="text-muted">
-                                  Endereço: {{ pessoa.endereco?.logradouro }}, {{ pessoa.endereco?.numero }} -
-                                  {{ pessoa.endereco?.bairro }} - {{ pessoa.endereco?.localidade }} CEP: {{
-                                  pessoa.endereco?.cep }}
-                                </small>
-                              </span>
-                        <i class="fas fa-fw fa-plus-circle text-muted fa-lg"></i>
-                            </div>
-                          </li>
-                        </ul>
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <label class="form-label mb-0">Empresa(s)</label>
 
-                        <!-- Selecionadas -->
-                        <div *ngIf="pessoasJuridicaSelecionadas.length > 0" class="form-text text-muted mt-2">
-                          <h6 class="card-subtitle text-muted">Empresas selecionadas:</h6>
-                          <ul class="lista-sem-bolinha">
-                            <li *ngFor="let p of pessoasJuridicaSelecionadas"
-                              class="d-flex justify-content-between align-items-center mb-2 px-1 py-2 border-bottom">
-                              <span class="texto-maior">
-                                <strong>{{ p.nome }}</strong><br />
-                                CNPJ: {{ p.cnpj }}<br />
-                                Endereço: {{ p.endereco?.logradouro }}, {{ p.endereco?.numero }} -
-                                {{ p.endereco?.bairro }} - {{ p.endereco?.localidade }}<br />
-                                CEP: {{ p.endereco?.cep }}
-                              </span>
-                              <button type="button" class="border-0 bg-transparent p-0"
-                                (click)="removerPessoaJuridicaSelecionada(p)">
-                                 <i class="fas fa-fw fa-trash-alt text-muted fa-lg"></i>
-                                          
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
+    <div class="btn-group btn-group-sm">
+      <button type="button"
+              class="btn"
+              [class.btn-primary]="tipoEmpresa === 'pf'"
+              [class.btn-outline-primary]="tipoEmpresa !== 'pf'"
+              (click)="mudarTipoEmpresa('pf')">
+        P. Física
+      </button>
+
+      <button type="button"
+              class="btn"
+              [class.btn-primary]="tipoEmpresa === 'pj'"
+              [class.btn-outline-primary]="tipoEmpresa !== 'pj'"
+              (click)="mudarTipoEmpresa('pj')">
+        P. Jurídica
+      </button>
+    </div>
+  </div>
+
+  <!-- Busca PF -->
+  <input *ngIf="tipoEmpresa === 'pf'"
+         type="text"
+         class="form-control"
+         placeholder="Digite o nome da pessoa física"
+         autocomplete="off"
+         [formControl]="empresaFisicaNomeControl"
+         (focus)="mostrarSugestoesEmpresaFisica = true"
+         (blur)="mostrarSugestoesEmpresaFisica = false">
+
+  <ul *ngIf="tipoEmpresa === 'pf' &&
+             mostrarSugestoesEmpresaFisica &&
+             empresasFisicasFiltradas.length > 0"
+      class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+
+    <li *ngFor="let pessoa of empresasFisicasFiltradas"
+        class="list-group-item hover-click"
+        (mousedown)="selecionarEmpresaFisica(pessoa)">
+      {{ pessoa.nome }} - CPF: {{ pessoa.cpf }}
+    </li>
+  </ul>
+
+  <!-- Busca PJ -->
+  <input *ngIf="tipoEmpresa === 'pj'"
+         type="text"
+         class="form-control"
+         placeholder="Digite o nome da empresa"
+         autocomplete="off"
+         [formControl]="pessoaJuridicaNomeControl"
+         (focus)="mostrarSugestoesPessoaJuridica = true"
+         (blur)="ocultarSugestoesComDelayPessoaJuridica()">
+
+  <ul *ngIf="tipoEmpresa === 'pj' &&
+             mostrarSugestoesPessoaJuridica &&
+             pessoasJuridicasFiltradas.length > 0"
+      class="list-group position-absolute w-100 shadow-sm mt-1 zindex-dropdown">
+
+    <li *ngFor="let pessoa of pessoasJuridicasFiltradas"
+        class="list-group-item hover-click"
+        (mousedown)="selecionarPessoaJuridica(pessoa)">
+      {{ pessoa.nome }} - CNPJ: {{ pessoa.cnpj }}
+    </li>
+  </ul>
+
+  <!-- Pessoas selecionadas -->
+  <div *ngIf="empresasFisicasSelecionadas.length ||
+              pessoasJuridicaSelecionadas.length"
+       class="form-text mt-2">
+
+    <h6 class="card-subtitle text-muted">Selecionados:</h6>
+
+    <ul class="lista-sem-bolinha">
+
+      <li *ngFor="let p of empresasFisicasSelecionadas"
+          class="d-flex justify-content-between align-items-center mb-2 border-bottom py-2">
+        <span>
+          <strong>{{ p.nome }}</strong>
+          <small class="d-block text-muted">CPF: {{ p.cpf }}</small>
+        </span>
+
+        <button type="button"
+                class="border-0 bg-transparent"
+                (click)="removerEmpresaFisica(p)">
+          <i class="fas fa-trash-alt text-muted"></i>
+        </button>
+      </li>
+
+      <li *ngFor="let p of pessoasJuridicaSelecionadas"
+          class="d-flex justify-content-between align-items-center mb-2 border-bottom py-2">
+        <span>
+          <strong>{{ p.nome }}</strong>
+          <small class="d-block text-muted">CNPJ: {{ p.cnpj }}</small>
+        </span>
+
+        <button type="button"
+                class="border-0 bg-transparent"
+                (click)="removerPessoaJuridicaSelecionada(p)">
+          <i class="fas fa-trash-alt text-muted"></i>
+        </button>
+      </li>
+
+    </ul>
+  </div>
+</div>
 
                       <!-- Representante(s) Jurídico -->
                       <div class="mb-3 col-md-3 position-relative">

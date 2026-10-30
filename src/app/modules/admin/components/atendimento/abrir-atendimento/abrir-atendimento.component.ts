@@ -50,6 +50,13 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
   mostrarSugestoesRepresentantesFisico = false;
   mostrarSugestoesRepresentantesJuridico = false;
 
+  tipoEmpresa: 'pf' | 'pj' = 'pj';
+
+  empresasFisicasSelecionadas: ConsultarPessoaResponse[] = [];
+  empresasFisicasFiltradas: ConsultarPessoaResponse[] = [];
+
+  empresaFisicaNomeControl = new FormControl('');
+  mostrarSugestoesEmpresaFisica = false;
 
   // --- Listas de sugestões retornadas pelos serviços
   artigoFiltradas: ConsultarArtigoResponse[] = [];
@@ -92,7 +99,7 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
     prazo: [''],
     // controles auxiliares mantidos no form apenas se desejar bind adicional
     reclamante: this.pessoaFisicaNomeControl,
-    reclamantePJ:this.pessoaPJNomeControl,
+    reclamantePJ: this.pessoaPJNomeControl,
     pessoaJuridicacaNome: this.pessoaJuridicaNomeControl,
     representantesFisico: this.representantesFisicaControl,
     representantesJuridico: this.representantesJuridicaControl,
@@ -100,18 +107,51 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
   });
 
   // validação para habilitar submit — exige PF e PJ pelo seu requisito original
-  get podeEnviar(): boolean {
-    return this.form.valid &&
-      this.pessoasSelecionadas.length > 0 &&
-      this.pessoasJuridicaSelecionadas.length > 0 || this.pessoasPJSelecionadas.length> 0;
-  }
+get podeEnviar(): boolean {
+  const temReclamante =
+    this.pessoasSelecionadas.length > 0 ||
+    this.pessoasPJSelecionadas.length > 0;
 
+  const temReclamada =
+    this.empresasFisicasSelecionadas.length > 0 ||
+    this.pessoasJuridicaSelecionadas.length > 0;
+
+  return this.form.valid && temReclamante && temReclamada;
+}
   //quillModules = { toolbar: [['bold', 'italic', 'underline']] };
 
   // -----------------------
   // Ciclo de vida
   // -----------------------
+  mudarTipoEmpresa(tipo: 'pf' | 'pj'): void {
+    this.tipoEmpresa = tipo;
 
+    this.empresaFisicaNomeControl.setValue('');
+    this.pessoaJuridicaNomeControl.setValue('');
+
+    this.mostrarSugestoesEmpresaFisica = false;
+    this.mostrarSugestoesPessoaJuridica = false;
+  }
+
+  selecionarEmpresaFisica(pessoa: ConsultarPessoaResponse): void {
+    if (this.empresasFisicasSelecionadas.some(
+      p => p.idPessoa === pessoa.idPessoa
+    )) {
+      this.mensagemErro = ['Essa pessoa já foi selecionada.'];
+      return;
+    }
+
+    this.empresasFisicasSelecionadas.push(pessoa);
+    this.empresaFisicaNomeControl.setValue('');
+    this.mostrarSugestoesEmpresaFisica = false;
+  }
+
+  removerEmpresaFisica(pessoa: ConsultarPessoaResponse): void {
+    this.empresasFisicasSelecionadas =
+      this.empresasFisicasSelecionadas.filter(
+        p => p.idPessoa !== pessoa.idPessoa
+      );
+  }
   mudarParaPF() {
     this.tipoReclamante = 'pf';
     this.pessoaFisicaNomeControl.setValue('');
@@ -148,7 +188,7 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
       switchMap(nome => this.pessoaService.buscarPorNomePessoaJuridica(nome)),
       catchError(() => of([]))
     ).subscribe(pessoas => this.pessoasJuridicasFiltradas = pessoas);
-     // Autocomplete PJ
+    // Autocomplete PJ
     this.pessoaPJNomeControl.valueChanges.pipe(
       debounceTime(300),
       filter((nome): nome is string => !!nome && nome.length >= 1),
@@ -181,6 +221,18 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
       catchError(() => of([]))
     ).subscribe(artigos => this.artigoFiltradas = artigos);
 
+    this.empresaFisicaNomeControl.valueChanges.pipe(
+      debounceTime(300),
+      switchMap(nome =>
+        nome?.trim()
+          ? this.pessoaService.buscarPorNome(nome)
+          : of([])
+      ),
+      catchError(() => of([]))
+    ).subscribe(pessoas => {
+      this.empresasFisicasFiltradas = pessoas;
+    });
+
     this.carregando = false;
   }
 
@@ -209,7 +261,7 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
     setTimeout(() => {
       this.mostrarSugestoesPessoaFisica = false;
       this.mostrarSugestoesPessoaJuridica = false;
-       this.mostrarSugestoesPJ = false;
+      this.mostrarSugestoesPJ = false;
       this.mostrarSugestoesRepresentantesFisico = false;
       this.mostrarSugestoesRepresentantesJuridico = false;
       this.mostrarSugestoesArtigo = false;
@@ -220,7 +272,7 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
   ocultarSugestoesComDelayRepresentantesFisico() { setTimeout(() => this.mostrarSugestoesRepresentantesFisico = false, 200); }
   ocultarSugestoesComDelayRepresentantesJuridico() { setTimeout(() => this.mostrarSugestoesRepresentantesJuridico = false, 200); }
   ocultarSugestoesComDelayArtigo() { setTimeout(() => this.mostrarSugestoesArtigo = false, 200); }
-   ocultarSugestoesComDelayPJ() { setTimeout(() => this.mostrarSugestoesPJ = false, 200); }
+  ocultarSugestoesComDelayPJ() { setTimeout(() => this.mostrarSugestoesPJ = false, 200); }
 
   // -----------------------
   // Seleção / remoção — PESSOA FÍSICA (reclamantes)
@@ -352,115 +404,145 @@ export class AbrirAtendimentoComponent implements OnInit /*AfterViewInit*/ {
   // -----------------------
   // Submit
   // -----------------------
-onSubmit() {
-  this.carregando = true;
+
+onSubmit(): void {
   this.mensagemErro = [];
   this.mensagemSucesso = [];
 
   if (!this.podeEnviar) {
-    this.mensagemErro = ['Preencha todos os campos obrigatórios corretamente.'];
-    this.carregando = false;
+    this.mensagemErro = [
+      'Preencha todos os campos obrigatórios e selecione pelo menos um reclamante e uma reclamada.'
+    ];
     return;
   }
 
-  // 🔹 Converte quebras de linha para <br>
+  this.carregando = true;
+
   const fatoFormatado = (this.form.value.fato ?? '')
     .replace(/\r\n|\r|\n/g, '<br>');
 
-  // 🔹 Monta o request base
   const request: CadastrarAtendimentoRequest = {
     idUsuario: this.form.value.idUsuario ?? undefined,
     protocolo: this.form.value.protocolo ?? undefined,
     fato: fatoFormatado,
     prazo: 7,
 
-    // 🔹 Reclamantes (PF + PJ conforme seleção)
-    GrupoReclamantesAtendimentoRequest: this.pessoasSelecionadas
-     
-        .filter(p => p.idPessoa)
-        .map(p => ({ idReclamante: p.idPessoa! })),
+    // Reclamantes PF
+    GrupoReclamantesAtendimentoRequest:
+      this.pessoasSelecionadas
+        .filter(p => !!p.idPessoa)
+        .map(p => ({
+          idReclamante: p.idPessoa!
+        })),
 
+    // Reclamantes PJ
+    GrupoReclamantesAtendimentoPJRequest:
+      this.pessoasPJSelecionadas
+        .filter(p => !!p.idPessoa)
+        .map(p => ({
+          idReclamante: p.idPessoa!
+        })),
 
-    
-     // Reclamantes PJ (novo campo obrigatório)
-  GrupoReclamantesAtendimentoPJRequest: this.pessoasPJSelecionadas
+    // Reclamadas PJ
+    GrupoReclamadasAtendimentoRequest:
+      this.pessoasJuridicaSelecionadas
+        .filter(p => !!p.idPessoa)
+        .map(p => ({
+          idReclamada: p.idPessoa!
+        })),
 
-      .filter(p => p.idPessoa)
-      .map(p => ({ idReclamante: p.idPessoa! })),
+    // Reclamadas PF
+    GrupoReclamadasAtendimentoPFRequest:
+      this.empresasFisicasSelecionadas
+        .filter(p => !!p.idPessoa)
+        .map(p => ({
+          idReclamada: p.idPessoa!
+        })),
 
-    // 🔹 Reclamadas (empresas)
-    GrupoReclamadasAtendimentoRequest: this.pessoasJuridicaSelecionadas
-      .filter(p => p.idPessoa)
-      .map(p => ({ idReclamada: p.idPessoa! })),
+    // Representantes PF
+    GrupoRepresentantesAtendimentoFisicoRequest:
+      this.representantesFisicoSelecionadas
+        .filter(p => !!p.idPessoa)
+        .map(p => ({
+          idReclamante: p.idPessoa!
+        })),
 
-    // 🔹 Representantes PF
-    GrupoRepresentantesAtendimentoFisicoRequest: this.representantesFisicoSelecionadas
-      .filter(p => p.idPessoa)
-      .map(p => ({ idReclamante: p.idPessoa! })),
+    // Representantes PJ
+    GrupoRepresentantesAtendimentoJuridicoRequest:
+      this.representantesJuridicoSelecionadas
+        .filter(p => !!p.idPessoa)
+        .map(p => ({
+          idReclamada: p.idPessoa!
+        })),
 
-    // 🔹 Representantes PJ
-    GrupoRepresentantesAtendimentoJuridicoRequest: this.representantesJuridicoSelecionadas
-      .filter(p => p.idPessoa)
-      .map(p => ({ idReclamada: p.idPessoa! })),
-
-    // 🔹 Artigos
-    GrupoArtigoAtendimentoRequest: this.artigosSelecionados
-      .filter(a => a.idArtigo)
-      .map(a => ({ idArtigo: a.idArtigo! })),
+    // Artigos
+    GrupoArtigoAtendimentoRequest:
+      this.artigosSelecionados
+        .filter(a => !!a.idArtigo)
+        .map(a => ({
+          idArtigo: a.idArtigo!
+        }))
   };
 
-  console.log('📤 Request enviado:', request);
+  console.log('Request enviado:', request);
 
-  // 🔥 ESCOLHE O ENDPOINT CONFORME O TIPO
+  // Seleciona o endpoint pelo tipo do RECLAMANTE,
+  // independentemente do tipo das reclamadas.
   const requisicao$ =
     this.tipoReclamante === 'pf'
-      ? this.atendimentoService.cadastrarPJ(request)
+      ? this.atendimentoService.cadastrar(request)
       : this.atendimentoService.cadastrarPJ(request);
 
   requisicao$.subscribe({
-    next: (response) => {
+    next: response => {
       this.carregando = false;
-
       this.mensagemSucesso = [response.mensagem];
 
-     this.codigoAtendimento = response.dados?.codigo
-  ? Number(response.dados.codigo)
-  : undefined;
+      this.codigoAtendimento = response.dados?.codigo
+        ? Number(response.dados.codigo)
+        : undefined;
 
       this.anoBaseAtendimento = response.dados?.anoBase;
       this.pdfGerado = true;
 
       this.resetarFormulario();
     },
-    error: (e) => {
+    error: e => {
       this.tratarErro(e);
       this.carregando = false;
     }
   });
 }
-private resetarFormulario() {
-  this.form.reset();
 
-  this.pessoasSelecionadas = [];
-  this.pessoasJuridicaSelecionadas = [];
-  this.pessoasPJSelecionadas = [];
-  this.representantesFisicoSelecionadas = [];
-  this.representantesJuridicoSelecionadas = [];
-  this.artigosSelecionados = [];
+  private resetarFormulario() {
+    this.form.reset();
 
-  this.pessoasFisicaFiltradas = [];
-  this.pessoasJuridicasFiltradas = [];
-  this.representanteFisicaFiltradas = [];
-  this.representanteJuridicaFiltradas = [];
-  this.artigoFiltradas = [];
+    this.pessoasSelecionadas = [];
+    this.pessoasJuridicaSelecionadas = [];
+    this.pessoasPJSelecionadas = [];
+    this.representantesFisicoSelecionadas = [];
+    this.representantesJuridicoSelecionadas = [];
+    this.artigosSelecionados = [];
 
-  if (this.usuarioLogado) {
-    this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
+    this.pessoasFisicaFiltradas = [];
+    this.pessoasJuridicasFiltradas = [];
+    this.representanteFisicaFiltradas = [];
+    this.representanteJuridicaFiltradas = [];
+    this.artigoFiltradas = [];
+
+    this.empresasFisicasSelecionadas = [];
+this.empresasFisicasFiltradas = [];
+this.empresaFisicaNomeControl.setValue('');
+this.mostrarSugestoesEmpresaFisica = false;
+this.tipoEmpresa = 'pj';
+
+    if (this.usuarioLogado) {
+      this.form.get('idUsuario')?.setValue(this.usuarioLogado.idUsuario ?? null);
+    }
+
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
   }
-
-  this.form.markAsPristine();
-  this.form.markAsUntouched();
-}
 
   // -----------------------
   // Conversão HTML -> tags básicas 

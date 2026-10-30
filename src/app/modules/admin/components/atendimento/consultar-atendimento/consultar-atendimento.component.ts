@@ -36,6 +36,12 @@ export class ConsultarAtendimentoComponent implements OnInit {
   ngOnInit(): void {
     this.carregarAtendimentos();
   }
+  
+limparFiltro(): void {
+  this.filtro = '';
+  this.aplicarFiltro();
+}
+
  aplicarFiltro() {
     this.paginaAtual = 1;
     this.carregarAtendimentos();

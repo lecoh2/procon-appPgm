@@ -11,7 +11,6 @@ export const environment = {
   apiProcon: urlBase,
   secretKey: '36f7509e-62ea-4b85-8ad7-44e92913441b'
 };*/
-
 //const urlBase = "http://localhost:5096";
 const urlBase = "http://134.65.21.253:300";
 export const environment = {

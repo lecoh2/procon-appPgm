@@ -53,3 +53,77 @@
   pointer-events: none;
 }
 
+
+.tabela-dashboard-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabela-dashboard {
+  font-size: 13px;
+}
+
+.tabela-dashboard thead th {
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 14px 12px;
+}
+
+.tabela-dashboard tbody td {
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.icone-dashboard {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.texto-dashboard {
+  font-size: 13px;
+}
+
+.nome-tooltip {
+  min-width: 0;
+}
+
+.nome-dashboard {
+  display: block;
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-mais-dashboard {
+  font-size: 11px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.btn-acao-dashboard {
+  width: 31px;
+  height: 31px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.tabela-dashboard .dropdown-menu {
+  min-width: 230px;
+  max-width: 420px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tabela-dashboard .dropdown-item {
+  font-size: 12px;
+  white-space: normal;
+  padding: 8px 12px;
+}

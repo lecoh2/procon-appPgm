@@ -1,141 +1,416 @@
+
 <div class="container-fluid p-0">
 
-  <h1 class="h3 mb-3">Consultar Atendimentos</h1>
+  <h1 class="h3 mb-3">
+    <i class="fas fa-clipboard-list text-primary me-2"></i>
+    Consultar Atendimentos
+  </h1>
 
   <div class="row">
     <div class="col-12">
       <div class="card">
+
         <div class="card-body">
 
-          <app-alerts *ngIf="!carregando && mensagemSucesso.length > 0" class="w-100" titulo="Sucesso!"
-            [mensagens]="mensagemSucesso" tipo="success" icone="fas fa-check-circle fa-lg">
+          <!-- ALERTAS -->
+          <app-alerts
+            *ngIf="!carregando && mensagemSucesso.length > 0"
+            class="w-100"
+            titulo="Sucesso!"
+            [mensagens]="mensagemSucesso"
+            tipo="success"
+            icone="fas fa-check-circle fa-lg">
           </app-alerts>
 
-          <app-alerts *ngIf="!carregando && mensagemErro.length > 0" class="w-100" titulo="Erro!"
-            [mensagens]="mensagemErro" tipo="danger" icone="fas fa-times-circle fa-lg">
+          <app-alerts
+            *ngIf="!carregando && mensagemErro.length > 0"
+            class="w-100"
+            titulo="Erro!"
+            [mensagens]="mensagemErro"
+            tipo="danger"
+            icone="fas fa-times-circle fa-lg">
           </app-alerts>
-          <!-- Pesquisar e tamanho da página -->
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <input type="text" class="form-control form-control-sm w-50"
-              placeholder="Pesquisar código, reclamante ou reclamada" [(ngModel)]="filtro"
-              (keyup.enter)="aplicarFiltro()">
-            <div>
-              <select class="form-select form-select-sm" [(ngModel)]="tamanhoPagina" (change)="aplicarFiltro()">
-                <option *ngFor="let size of [5,10,20,50]" [value]="size">{{ size }} por página</option>
+
+          <!-- PESQUISA -->
+          <div class="row g-3 align-items-end mb-4">
+
+            <div class="col-md-8">
+              <label class="form-label fw-semibold">
+                <i class="fas fa-search me-1 text-primary"></i>
+                Consultar atendimentos
+              </label>
+
+              <div class="input-group">
+
+                <span class="input-group-text">
+                  <i class="fas fa-filter"></i>
+                </span>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Pesquisar código, reclamante ou reclamada..."
+                  [(ngModel)]="filtro"
+                  (keyup.enter)="aplicarFiltro()">
+
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="carregando"
+                  (click)="aplicarFiltro()">
+                  <i class="fas fa-search me-1"></i>
+                  Buscar
+                </button>
+
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">
+                <i class="fas fa-list-ol me-1 text-primary"></i>
+                Registros por página
+              </label>
+
+              <select
+                class="form-select"
+                [(ngModel)]="tamanhoPagina"
+                (change)="aplicarFiltro()">
+
+                <option *ngFor="let size of [5,10,20,50]" [value]="size">
+                  {{ size }} por página
+                </option>
+
               </select>
             </div>
+
           </div>
-          <!-- Tabela de Atendimentos -->
-          <table id="datatables-atendimento" class="table table-striped w-100">
-            <thead>
-              <tr>
-                <th>Número do Atendimento</th>
-                <th>Reclamantes</th>
-                <th>Reclamadas</th>
-                <th>Data Atendimento</th>                
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let atendimento of dataSource.data" style="font-size: smaller;">
-                <td>
-                  {{ atendimento.codigo }}/{{ atendimento.anoBase }}
-                </td>
 
-                <!-- Reclamantes -->
-                <td>
-                  <ng-container *ngIf="atendimento.grupoReclamantesAtendimento?.length">
-                    <span>{{ atendimento.grupoReclamantesAtendimento[0] ?? '' }}
-                      | CNPJ: {{ formatarCnpj(atendimento.grupoReclamantesAtendimentoCpf[0] ?? '') }}</span>
+          <!-- TABELA -->
+          <div class="table-responsive tabela-dashboard-wrapper">
 
-                    <ng-container *ngIf="atendimento.grupoReclamantesAtendimento.length > 1">
-                      <div class="dropdown d-inline">
-                        <a href="#" data-bs-toggle="dropdown" class="ms-2">
-                          <span class="badge bg-success">ver mais
-                            <i class="fas fa-fw fa-list-ol fa-sm"></i>
-                          </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                          <li *ngFor="let r of atendimento.grupoReclamantesAtendimento.slice(1); let i = index">
-                            <span class="dropdown-item">
-                              {{ r ?? '' }} | CNPJ: {{ formatarCnpj(atendimento.grupoReclamantesAtendimentoCpf[i + 1] ?? '')
-                              }}
-                            </span>
-                          </li>
-                        </ul>
+            <table
+              id="datatables-atendimento"
+              class="table table-hover table-striped align-middle mb-0 w-100 tabela-dashboard tabela-atendimentos">
+
+              <thead>
+                <tr>
+                  <th>
+                    <i class="fas fa-hashtag me-2 text-primary"></i>
+                    Número do Atendimento
+                  </th>
+
+                  <th>
+                    <i class="fas fa-user me-2 text-success"></i>
+                    Reclamantes
+                  </th>
+
+                  <th>
+                    <i class="fas fa-building me-2 text-warning"></i>
+                    Reclamadas
+                  </th>
+
+                  <th>
+                    <i class="fas fa-clock me-2 text-secondary"></i>
+                    Data Atendimento
+                  </th>
+
+                  <th class="text-end">
+                    <i class="fas fa-cogs me-2 text-secondary"></i>
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr
+                  *ngFor="let atendimento of dataSource.data"
+                  style="font-size: smaller;">
+
+                  <!-- NÚMERO -->
+                  <td class="align-middle">
+
+                    <div class="d-flex align-items-center">
+
+                      <div class="icone-dashboard bg-primary-subtle me-2">
+                        <i class="fas fa-file-alt text-primary"></i>
                       </div>
-                    </ng-container>
-                  </ng-container>
-                </td>
 
-                <!-- Reclamadas -->
-                <td>
-                  <ng-container *ngIf="atendimento.grupoReclamadasAtendimento?.length">
-                    <span>{{ atendimento.grupoReclamadasAtendimento[0] ?? '' }}
-                      | CNPJ: {{ formatarCnpj(atendimento.grupoReclamadasAtendimentoCnpj[0] ?? '') }}</span>
+                      <span class="texto-dashboard text-nowrap">
+                        {{ atendimento.codigo }}/{{ atendimento.anoBase }}
+                      </span>
 
-                    <ng-container *ngIf="atendimento.grupoReclamadasAtendimento.length > 1">
-                      <div class="dropdown d-inline">
-                        <a href="#" data-bs-toggle="dropdown" class="ms-2">
-                          <span class="badge bg-success">ver mais
-                            <i class="fas fa-fw fa-list-ol fa-sm"></i>
+                    </div>
+
+                  </td>
+
+                  <!-- RECLAMANTES -->
+                  <td class="align-middle">
+
+                    <ng-container
+                      *ngIf="atendimento.grupoReclamantesAtendimento?.length">
+
+                      <div class="d-flex align-items-center">
+
+                        <div class="icone-dashboard bg-success-subtle me-2">
+                          <i class="fas fa-user text-success"></i>
+                        </div>
+
+                        <!-- PRIMEIRO RECLAMANTE -->
+                        <div class="nome-tooltip">
+
+                          <span class="texto-dashboard nome-dashboard">
+                            {{ atendimento.grupoReclamantesAtendimento[0] ?? '' }}
+                            | CNPJ:
+                            {{
+                              formatarCnpj(
+                                atendimento.grupoReclamantesAtendimentoCpf[0] ?? ''
+                              )
+                            }}
                           </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                          <li *ngFor="let r of atendimento.grupoReclamadasAtendimento.slice(1); let i = index">
-                            <span class="dropdown-item">
-                              {{ r ?? '' }} | CNPJ: {{ formatarCnpj(atendimento.grupoReclamadasAtendimentoCnpj[i + 1] ??
-                              '') }}
-                            </span>
-                          </li>
-                        </ul>
+
+                        </div>
+
+                        <!-- DEMAIS RECLAMANTES -->
+                        <div
+                          *ngIf="atendimento.grupoReclamantesAtendimento.length > 1"
+                          class="d-inline-block ms-2 dropdown">
+
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-success rounded-pill btn-mais-dashboard dropdown-toggle"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                            +{{ atendimento.grupoReclamantesAtendimento.length - 1 }}
+
+                          </button>
+
+                          <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+
+                            <li
+                              *ngFor="
+                                let r of atendimento.grupoReclamantesAtendimento.slice(1);
+                                let i = index
+                              ">
+
+                              <span class="dropdown-item">
+
+                                <i class="fas fa-user text-success me-2"></i>
+
+                                {{ r ?? '' }}
+                                | CNPJ:
+                                {{
+                                  formatarCnpj(
+                                    atendimento.grupoReclamantesAtendimentoCpf[i + 1] ?? ''
+                                  )
+                                }}
+
+                              </span>
+
+                            </li>
+
+                          </ul>
+
+                        </div>
+
                       </div>
+
                     </ng-container>
-                  </ng-container>
-                </td>
 
-                <td>{{ formatarData(atendimento.dataCadastro) }}</td>
-                <!--td>{{ getPrimeiroNome(atendimento.usuario) }}</td-->
+                  </td>
 
+                  <!-- RECLAMADAS -->
+                  <td class="align-middle">
 
-                <td class="text-end align-middle">
-                  <a [routerLink]="['/admin/editar-atendimento-pj', atendimento.idAtendimento]" title="Editar">
-                    <i class="align-middle me-2 fas fa-fw fa-pencil-alt fa-lg"></i>
-                  </a>
-                  <a [href]="urlBase + '/api/atendimento/export-pdf-atendimento-pj?codigo=' + atendimento.codigo + '&anoBase=' + atendimento.anoBase"
-                    target="_blank" rel="noopener noreferrer" class="ms-2" title="Imprimir PDF">
-                    <i class="align-middle me-2 fas fa-print fa-lg"></i>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    <ng-container
+                      *ngIf="atendimento.grupoReclamadasAtendimento?.length">
+
+                      <div class="d-flex align-items-center">
+
+                        <div class="icone-dashboard bg-warning-subtle me-2">
+                          <i class="fas fa-building text-warning"></i>
+                        </div>
+
+                        <!-- PRIMEIRA RECLAMADA -->
+                        <div class="nome-tooltip">
+
+                          <span class="texto-dashboard nome-dashboard">
+                            {{ atendimento.grupoReclamadasAtendimento[0] ?? '' }}
+                            | CNPJ:
+                            {{
+                              formatarCnpj(
+                                atendimento.grupoReclamadasAtendimentoCnpj[0] ?? ''
+                              )
+                            }}
+                          </span>
+
+                        </div>
+
+                        <!-- DEMAIS RECLAMADAS -->
+                        <div
+                          *ngIf="atendimento.grupoReclamadasAtendimento.length > 1"
+                          class="d-inline-block ms-2 dropdown">
+
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-outline-warning rounded-pill btn-mais-dashboard dropdown-toggle"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                            +{{ atendimento.grupoReclamadasAtendimento.length - 1 }}
+
+                          </button>
+
+                          <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+
+                            <li
+                              *ngFor="
+                                let r of atendimento.grupoReclamadasAtendimento.slice(1);
+                                let i = index
+                              ">
+
+                              <span class="dropdown-item">
+
+                                <i class="fas fa-building text-warning me-2"></i>
+
+                                {{ r ?? '' }}
+                                | CNPJ:
+                                {{
+                                  formatarCnpj(
+                                    atendimento.grupoReclamadasAtendimentoCnpj[i + 1] ?? ''
+                                  )
+                                }}
+
+                              </span>
+
+                            </li>
+
+                          </ul>
+
+                        </div>
+
+                      </div>
+
+                    </ng-container>
+
+                  </td>
+
+                  <!-- DATA -->
+                  <td class="align-middle text-nowrap">
+
+                    <i class="fas fa-clock text-secondary me-2"></i>
+
+                    <span class="texto-dashboard">
+                      {{ formatarData(atendimento.dataCadastro) }}
+                    </span>
+
+                  </td>
+
+                  <!-- AÇÕES -->
+                  <td class="text-end align-middle">
+
+                    <div class="d-flex justify-content-end gap-1">
+
+                      <!-- EDITAR PJ -->
+                      <a
+                        [routerLink]="[
+                          '/admin/editar-atendimento-pj',
+                          atendimento.idAtendimento
+                        ]"
+                        class="btn btn-sm btn-outline-primary rounded-circle btn-acao-dashboard"
+                        title="Editar">
+
+                        <i class="fas fa-pencil-alt"></i>
+
+                      </a>
+
+                      <!-- PDF PJ -->
+                      <a
+                        [href]="urlBase + '/api/atendimento/export-pdf-atendimento-pj?codigo='
+                          + atendimento.codigo + '&anoBase=' + atendimento.anoBase"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-sm btn-outline-danger rounded-circle btn-acao-dashboard"
+                        title="Imprimir PDF">
+
+                        <i class="fas fa-print"></i>
+
+                      </a>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
         </div>
+
+        <!-- PAGINAÇÃO ORIGINAL -->
         <nav *ngIf="totalPaginas > 1">
           <ul class="pagination justify-content-center mt-3">
+
             <li class="page-item" [class.disabled]="paginaAtual === 1">
-              <a class="page-link" (click)="irParaPagina(1)">Primeira</a>
-            </li>
-            <li class="page-item" [class.disabled]="paginaAtual === 1">
-              <a class="page-link" (click)="irParaPagina(paginaAtual - 1)">Anterior</a>
+              <a class="page-link" (click)="irParaPagina(1)">
+                Primeira
+              </a>
             </li>
 
-            <li class="page-item" *ngFor="let p of paginasVisiveis" [class.active]="p === paginaAtual">
-              <a class="page-link" (click)="irParaPagina(p)">{{ p }}</a>
+            <li class="page-item" [class.disabled]="paginaAtual === 1">
+              <a class="page-link" (click)="irParaPagina(paginaAtual - 1)">
+                Anterior
+              </a>
             </li>
 
-            <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
-              <a class="page-link" (click)="irParaPagina(paginaAtual + 1)">Próxima</a>
+            <li
+              class="page-item"
+              *ngFor="let p of paginasVisiveis"
+              [class.active]="p === paginaAtual">
+
+              <a class="page-link" (click)="irParaPagina(p)">
+                {{ p }}
+              </a>
+
             </li>
-            <li class="page-item" [class.disabled]="paginaAtual === totalPaginas">
-              <a class="page-link" (click)="irParaPagina(totalPaginas)">Última</a>
+
+            <li
+              class="page-item"
+              [class.disabled]="paginaAtual === totalPaginas">
+
+              <a
+                class="page-link"
+                (click)="irParaPagina(paginaAtual + 1)">
+                Próxima
+              </a>
+
             </li>
+
+            <li
+              class="page-item"
+              [class.disabled]="paginaAtual === totalPaginas">
+
+              <a
+                class="page-link"
+                (click)="irParaPagina(totalPaginas)">
+                Última
+              </a>
+
+            </li>
+
           </ul>
         </nav>
-        <p class="text-end text-muted">Mostrando página {{ paginaAtual }} de {{ totalPaginas }} | Total de registros: {{
-          totalRegistros }}</p>
+
+        <p class="text-end text-muted">
+          Mostrando página {{ paginaAtual }} de {{ totalPaginas }}
+          | Total de registros: {{ totalRegistros }}
+        </p>
 
       </div>
     </div>
   </div>
+
 </div>

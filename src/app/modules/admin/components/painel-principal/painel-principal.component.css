@@ -1,0 +1,735 @@
+/* ==========================================================
+   TABELAS DASHBOARD
+   ATENDIMENTOS + RECLAMAÇÕES
+   ========================================================== */
+
+.tabela-dashboard-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.tabela-dashboard {
+  width: 100%;
+  margin-bottom: 0;
+  table-layout: auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+.tabela-dashboard thead th {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02rem;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-bottom-width: 1px;
+}
+
+
+/* ==========================================================
+   CÉLULAS
+   ========================================================== */
+
+.tabela-dashboard tbody td {
+  font-size: 0.82rem;
+  font-weight: 400;
+  vertical-align: middle;
+
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+
+/* ==========================================================
+   TEXTO
+   ========================================================== */
+
+.texto-dashboard {
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+
+/* ==========================================================
+   NOMES
+   ========================================================== */
+
+.nome-dashboard {
+  display: inline-block;
+
+  max-width: 145px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  vertical-align: middle;
+}
+
+
+/* ==========================================================
+   ÍCONES CIRCULARES
+   ========================================================== */
+
+.icone-dashboard {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+}
+
+.icone-dashboard i {
+  font-size: 0.75rem;
+}
+
+
+/* ==========================================================
+   BOTÃO +X
+   ========================================================== */
+
+.btn-mais-dashboard {
+  font-size: 0.72rem;
+
+  padding-top: 1px;
+  padding-bottom: 1px;
+
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+
+/* ==========================================================
+   BOTÕES DE AÇÃO
+   ========================================================== */
+
+.btn-acao-dashboard {
+  width: 29px;
+  height: 29px;
+  min-width: 29px;
+
+  padding: 0;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-acao-dashboard i {
+  font-size: 0.7rem;
+}
+
+
+/* ==========================================================
+   DROPDOWN
+   ========================================================== */
+
+.tabela-dashboard .dropdown-menu {
+  min-width: 220px;
+
+  border-radius: 0.6rem;
+}
+
+.tabela-dashboard .dropdown-item {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+
+  font-size: 0.8rem;
+
+  white-space: normal;
+}
+
+
+/* ==========================================================
+   BADGES
+   ========================================================== */
+
+.tabela-dashboard .badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+
+/* ==========================================================
+   EFEITO LINHA
+   ========================================================== */
+
+.tabela-dashboard tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+
+/* ==========================================================
+   TOOLTIP DOS NOMES
+   ========================================================== */
+
+.nome-tooltip {
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  min-width: 0;
+}
+
+
+/* CAIXA */
+
+.nome-tooltip-conteudo {
+  position: absolute;
+
+  bottom: calc(100% + 8px);
+  left: 0;
+
+  z-index: 9999;
+
+  min-width: 180px;
+  max-width: 350px;
+
+  padding: 8px 12px;
+
+  border-radius: 6px;
+
+  background: #212529;
+  color: #fff;
+
+  font-size: 0.78rem;
+  font-weight: 400;
+
+  white-space: normal;
+  word-break: break-word;
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.18);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(4px);
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
+
+  pointer-events: none;
+}
+
+
+/* MOSTRA TOOLTIP */
+
+.nome-tooltip:hover
+.nome-tooltip-conteudo {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+
+/* SETA */
+
+.nome-tooltip-conteudo::after {
+  content: '';
+
+  position: absolute;
+
+  top: 100%;
+  left: 20px;
+
+  border-width: 5px;
+  border-style: solid;
+
+  border-color:
+    #212529
+    transparent
+    transparent
+    transparent;
+}
+
+
+/* ==========================================================
+   LARGURAS - ATENDIMENTOS
+   ========================================================== */
+
+/* CÓDIGO */
+
+.tabela-atendimentos th:nth-child(1),
+.tabela-atendimentos td:nth-child(1) {
+  width: 12%;
+}
+
+
+/* RECLAMANTES */
+
+.tabela-atendimentos th:nth-child(2),
+.tabela-atendimentos td:nth-child(2) {
+  width: 20%;
+}
+
+
+/* RECLAMADAS */
+
+.tabela-atendimentos th:nth-child(3),
+.tabela-atendimentos td:nth-child(3) {
+  width: 20%;
+}
+
+
+/* STATUS */
+
+.tabela-atendimentos th:nth-child(4),
+.tabela-atendimentos td:nth-child(4) {
+  width: 15%;
+}
+
+
+/* PRAZO */
+
+.tabela-atendimentos th:nth-child(5),
+.tabela-atendimentos td:nth-child(5) {
+  width: 11%;
+}
+
+
+/* DATA */
+
+.tabela-atendimentos th:nth-child(6),
+.tabela-atendimentos td:nth-child(6) {
+  width: 14%;
+}
+
+
+/* AÇÕES */
+
+.tabela-atendimentos th:nth-child(7),
+.tabela-atendimentos td:nth-child(7) {
+  width: 8%;
+
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   LARGURAS - RECLAMAÇÕES
+   ========================================================== */
+
+/* CÓDIGO */
+
+.tabela-reclamacoes th:nth-child(1),
+.tabela-reclamacoes td:nth-child(1) {
+  width: 16%;
+}
+
+
+/* RECLAMANTES */
+
+.tabela-reclamacoes th:nth-child(2),
+.tabela-reclamacoes td:nth-child(2) {
+  width: 27%;
+}
+
+
+/* RECLAMADAS */
+
+.tabela-reclamacoes th:nth-child(3),
+.tabela-reclamacoes td:nth-child(3) {
+  width: 27%;
+}
+
+
+/* DATA */
+
+.tabela-reclamacoes th:nth-child(4),
+.tabela-reclamacoes td:nth-child(4) {
+  width: 18%;
+}
+
+
+/* AÇÕES */
+
+.tabela-reclamacoes th:nth-child(5),
+.tabela-reclamacoes td:nth-child(5) {
+  width: 12%;
+
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 1199px) {
+
+  .tabela-atendimentos {
+    min-width: 1050px;
+  }
+
+  .tabela-reclamacoes {
+    min-width: 800px;
+  }
+
+}
+/* ==========================================================
+   TABELA - LEMBRETES E PENDÊNCIAS
+   ========================================================== */
+
+.tabela-lembretes-wrapper {
+  width: 100%;
+  max-width: 100%;
+
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.tabela-lembretes {
+  width: 100%;
+  margin-bottom: 0;
+
+  table-layout: auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+.tabela-lembretes thead th {
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.02rem;
+
+  white-space: nowrap;
+
+  vertical-align: middle;
+
+  border-bottom-width: 1px;
+}
+
+
+/* ==========================================================
+   CÉLULAS
+   ========================================================== */
+
+.tabela-lembretes tbody td {
+  font-size: 0.82rem;
+  font-weight: 400;
+
+  vertical-align: middle;
+
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+
+/* ==========================================================
+   TEXTO
+   ========================================================== */
+
+.texto-lembrete {
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+
+/* ==========================================================
+   TÍTULO
+   ========================================================== */
+
+.titulo-lembrete {
+  max-width: 320px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   ÍCONES CIRCULARES
+   ========================================================== */
+
+.icone-lembrete {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+}
+
+.icone-lembrete i {
+  font-size: 0.75rem;
+}
+
+
+/* ==========================================================
+   BADGES
+   ========================================================== */
+
+.tabela-lembretes .badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.badge-tipo-lembrete {
+  min-width: 75px;
+}
+
+
+/* ==========================================================
+   RESPONSÁVEL
+   ========================================================== */
+
+.nome-responsavel-lembrete {
+  display: inline-block;
+
+  max-width: 150px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  vertical-align: middle;
+}
+
+
+/* ==========================================================
+   BOTÃO +X
+   ========================================================== */
+
+.btn-mais-lembrete {
+  font-size: 0.72rem;
+
+  padding-top: 1px;
+  padding-bottom: 1px;
+
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+
+/* ==========================================================
+   BOTÃO DE AÇÃO
+   ========================================================== */
+
+.btn-acao-lembrete {
+  width: 29px;
+  height: 29px;
+  min-width: 29px;
+
+  padding: 0;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-acao-lembrete i {
+  font-size: 0.7rem;
+}
+
+
+/* ==========================================================
+   DROPDOWN
+   ========================================================== */
+
+.tabela-lembretes .dropdown-menu {
+  min-width: 220px;
+
+  border-radius: 0.6rem;
+}
+
+.tabela-lembretes .dropdown-item {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+
+  font-size: 0.8rem;
+
+  white-space: normal;
+}
+
+
+/* ==========================================================
+   TOOLTIP RESPONSÁVEL
+   ========================================================== */
+
+.responsavel-tooltip {
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  min-width: 0;
+}
+
+
+.responsavel-tooltip-conteudo {
+  position: absolute;
+
+  bottom: calc(100% + 8px);
+  left: 0;
+
+  z-index: 9999;
+
+  min-width: 180px;
+  max-width: 350px;
+
+  padding: 8px 12px;
+
+  border-radius: 6px;
+
+  background: #212529;
+  color: #fff;
+
+  font-size: 0.78rem;
+  font-weight: 400;
+
+  white-space: normal;
+
+  word-break: break-word;
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.18);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(4px);
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
+
+  pointer-events: none;
+}
+
+
+.responsavel-tooltip:hover
+.responsavel-tooltip-conteudo {
+  opacity: 1;
+
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+
+/* SETINHA */
+
+.responsavel-tooltip-conteudo::after {
+  content: '';
+
+  position: absolute;
+
+  top: 100%;
+  left: 20px;
+
+  border-width: 5px;
+
+  border-style: solid;
+
+  border-color:
+    #212529
+    transparent
+    transparent
+    transparent;
+}
+
+
+/* ==========================================================
+   LARGURA DAS COLUNAS
+   ========================================================== */
+
+/* TIPO */
+
+.tabela-lembretes th:nth-child(1),
+.tabela-lembretes td:nth-child(1) {
+  width: 12%;
+}
+
+
+/* TÍTULO */
+
+.tabela-lembretes th:nth-child(2),
+.tabela-lembretes td:nth-child(2) {
+  width: 33%;
+}
+
+
+/* DATA */
+
+.tabela-lembretes th:nth-child(3),
+.tabela-lembretes td:nth-child(3) {
+  width: 20%;
+}
+
+
+/* RESPONSÁVEIS */
+
+.tabela-lembretes th:nth-child(4),
+.tabela-lembretes td:nth-child(4) {
+  width: 27%;
+}
+
+
+/* AÇÕES */
+
+.tabela-lembretes th:nth-child(5),
+.tabela-lembretes td:nth-child(5) {
+  width: 8%;
+
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   EFEITO LINHA
+   ========================================================== */
+
+.tabela-lembretes tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 1199px) {
+
+  .tabela-lembretes {
+    min-width: 850px;
+  }
+
+}

@@ -103,503 +103,1416 @@
         </div>
     </div>
   <div class="row">
-    <!-- 🔔 LEMBRETES -->
-<div class="col-12 col-lg-12 d-flex">
 
-  <div class="card flex-fill w-100">
+    <!-- ====================================================== -->
+    <!-- LEMBRETES E PENDÊNCIAS                                 -->
+    <!-- ====================================================== -->
 
-    <!-- HEADER -->
-    <div class="card-header">
+    <div class="col-12 col-lg-12 d-flex">
 
-      <div class="card-actions float-end">
+        <div class="card flex-fill w-100">
 
-        <span
-          class="badge bg-primary">
+            <!-- HEADER -->
+            <div class="card-header">
 
-          {{ lembretes?.length || 0 }}
+                <div class="card-actions float-end">
+                    <span class="badge bg-primary rounded-pill">
+                        {{ lembretes?.length || 0 }}
+                    </span>
+                </div>
 
-        </span>
+                <h5 class="card-title mb-0">
+                    Lembretes e Pendências
+                </h5>
 
-      </div>
+            </div>
 
-      <h5 class="card-title mb-0">
 
-        Lembretes e Pendências
+            <div class="card-body p-0">
 
-      </h5>
+                <!-- SEM DADOS -->
+
+                <div
+                    *ngIf="!lembretes?.length"
+                    class="p-4 text-center text-muted"
+                >
+                    <i class="fas fa-bell-slash me-2"></i>
+                    Nenhum lembrete encontrado
+                </div>
+
+
+                <!-- TABELA -->
+
+                <div
+                    class="table-responsive tabela-lembretes-wrapper"
+                    *ngIf="lembretes?.length"
+                >
+
+                    <table
+                        class="table table-hover table-striped align-middle mb-0 tabela-lembretes"
+                    >
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    <i class="fas fa-layer-group me-2 text-primary"></i>
+                                    Tipo
+                                </th>
+
+                                <th>
+                                    <i class="fas fa-align-left me-2 text-secondary"></i>
+                                    Título
+                                </th>
+
+                                <th>
+                                    <i class="fas fa-calendar-alt me-2 text-info"></i>
+                                    Data
+                                </th>
+
+                                <th>
+                                    <i class="fas fa-users me-2 text-success"></i>
+                                    Responsáveis
+                                </th>
+
+                                <th class="text-end">
+                                    <i class="fas fa-cogs me-2 text-secondary"></i>
+                                    Ações
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr *ngFor="let item of lembretes">
+
+                                <!-- ================================== -->
+                                <!-- TIPO                               -->
+                                <!-- ================================== -->
+
+                                <td class="align-middle">
+
+                                    <!-- EVENTO -->
+
+                                    <span
+                                        *ngIf="item.tipo === 'Evento'"
+                                        class="badge badge-tipo-lembrete badge-subtle-primary rounded-pill"
+                                    >
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Evento
+                                    </span>
+
+
+                                    <!-- TAREFA -->
+
+                                    <span
+                                        *ngIf="item.tipo === 'Tarefa'"
+                                        class="badge badge-tipo-lembrete badge-subtle-success rounded-pill"
+                                    >
+                                        <i class="fas fa-tasks me-1"></i>
+                                        Tarefa
+                                    </span>
+
+                                </td>
+
+
+                                <!-- ================================== -->
+                                <!-- TÍTULO                             -->
+                                <!-- ================================== -->
+
+                                <td class="align-middle">
+
+                                    <div class="d-flex align-items-center">
+
+                                        <div
+                                            class="icone-lembrete me-2"
+                                            [ngClass]="{
+                                                'bg-primary-subtle':
+                                                    item.tipo === 'Evento',
+
+                                                'bg-success-subtle':
+                                                    item.tipo === 'Tarefa'
+                                            }"
+                                        >
+
+                                            <i
+                                                *ngIf="item.tipo === 'Evento'"
+                                                class="fas fa-calendar-alt text-primary"
+                                            ></i>
+
+                                            <i
+                                                *ngIf="item.tipo === 'Tarefa'"
+                                                class="fas fa-check-square text-success"
+                                            ></i>
+
+                                        </div>
+
+
+                                        <div class="overflow-hidden">
+
+                                            <!-- TÍTULO -->
+
+                                            <div
+                                                class="texto-lembrete titulo-lembrete"
+                                                [title]="item.titulo"
+                                            >
+                                                {{ item.titulo }}
+                                            </div>
+
+
+                                            <!-- INFORMAÇÕES -->
+
+                                            <div
+                                                *ngIf="
+                                                    item.recorrente ||
+                                                    item.diaInteiro
+                                                "
+                                                class="mt-1"
+                                            >
+
+                                                <span
+                                                    *ngIf="item.recorrente"
+                                                    class="badge badge-subtle-info rounded-pill me-1"
+                                                >
+                                                    <i class="fas fa-sync-alt me-1"></i>
+                                                    Recorrente
+                                                </span>
+
+
+                                                <span
+                                                    *ngIf="item.diaInteiro"
+                                                    class="badge badge-subtle-dark rounded-pill"
+                                                >
+                                                    <i class="fas fa-sun me-1"></i>
+                                                    Dia inteiro
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ================================== -->
+                                <!-- DATA                               -->
+                                <!-- ================================== -->
+
+                                <td class="align-middle">
+
+                                    <div class="d-flex align-items-center">
+
+                                        <div
+                                            class="icone-lembrete bg-info-subtle me-2"
+                                        >
+                                            <i
+                                                class="fas fa-clock text-info"
+                                            ></i>
+                                        </div>
+
+
+                                        <div>
+
+                                            <div
+                                                class="texto-lembrete text-nowrap"
+                                            >
+                                                {{
+                                                    item.data
+                                                        | date: 'dd/MM/yyyy'
+                                                }}
+                                            </div>
+
+
+                                            <div class="mt-1">
+
+                                                <!-- HOJE -->
+
+                                                <span
+                                                    *ngIf="
+                                                        item.categoria ===
+                                                        'Hoje'
+                                                    "
+                                                    class="badge badge-subtle-success rounded-pill"
+                                                >
+                                                    Hoje
+                                                </span>
+
+
+                                                <!-- AMANHÃ -->
+
+                                                <span
+                                                    *ngIf="
+                                                        item.categoria ===
+                                                        'Amanhã'
+                                                    "
+                                                    class="badge badge-subtle-warning rounded-pill"
+                                                >
+                                                    Amanhã
+                                                </span>
+
+
+                                                <!-- PRÓXIMOS -->
+
+                                                <span
+                                                    *ngIf="
+                                                        item.categoria ===
+                                                        'Próximos'
+                                                    "
+                                                    class="badge badge-subtle-primary rounded-pill"
+                                                >
+                                                    Próximos
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ================================== -->
+                                <!-- RESPONSÁVEIS                       -->
+                                <!-- ================================== -->
+
+                                <td class="align-middle">
+
+                                    <ng-container
+                                        *ngIf="
+                                            item.responsaveis?.length;
+                                            else semResponsavelLembrete
+                                        "
+                                    >
+
+                                        <div class="d-flex align-items-center">
+
+                                            <!-- ÍCONE -->
+
+                                            <div
+                                                class="icone-lembrete bg-success-subtle me-2"
+                                            >
+                                                <i
+                                                    class="fas fa-user text-success"
+                                                ></i>
+                                            </div>
+
+
+                                            <!-- PRIMEIRO RESPONSÁVEL -->
+
+                                            <div class="responsavel-tooltip">
+
+                                                <span
+                                                    class="texto-lembrete nome-responsavel-lembrete"
+                                                >
+                                                    {{
+                                                        item.responsaveis[0]
+                                                    }}
+                                                </span>
+
+
+                                                <div
+                                                    class="responsavel-tooltip-conteudo"
+                                                >
+                                                    <i
+                                                        class="fas fa-user me-2"
+                                                    ></i>
+
+                                                    {{
+                                                        item.responsaveis[0]
+                                                    }}
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- OUTROS RESPONSÁVEIS -->
+
+                                            <div
+                                                *ngIf="
+                                                    item.responsaveis.length >
+                                                    1
+                                                "
+                                                class="d-inline-block ms-2 dropdown"
+                                            >
+
+                                                <button
+                                                    class="btn btn-sm btn-outline-success rounded-pill btn-mais-lembrete dropdown-toggle"
+                                                    type="button"
+                                                    data-bs-toggle="dropdown"
+                                                    aria-expanded="false"
+                                                >
+                                                    +{{
+                                                        item.responsaveis
+                                                            .length - 1
+                                                    }}
+                                                </button>
+
+
+                                                <ul
+                                                    class="dropdown-menu shadow border-0"
+                                                >
+
+                                                    <li
+                                                        *ngFor="
+                                                            let r of item.responsaveis.slice(
+                                                                1
+                                                            )
+                                                        "
+                                                    >
+
+                                                        <span
+                                                            class="dropdown-item small"
+                                                        >
+
+                                                            <i
+                                                                class="fas fa-user text-success me-2"
+                                                            ></i>
+
+                                                            {{ r }}
+
+                                                        </span>
+
+                                                    </li>
+
+                                                </ul>
+
+                                            </div>
+
+                                        </div>
+
+                                    </ng-container>
+
+
+                                    <!-- SEM RESPONSÁVEL -->
+
+                                    <ng-template
+                                        #semResponsavelLembrete
+                                    >
+
+                                        <span
+                                            class="texto-lembrete text-muted"
+                                        >
+                                            <i
+                                                class="fas fa-user-slash me-2"
+                                            ></i>
+
+                                            Nenhum
+                                        </span>
+
+                                    </ng-template>
+
+                                </td>
+
+
+                                <!-- ================================== -->
+                                <!-- AÇÕES                              -->
+                                <!-- ================================== -->
+
+                                <td class="text-end align-middle">
+
+                                    <div
+                                        class="d-flex justify-content-end"
+                                    >
+
+                                        <a
+                                            [routerLink]="
+                                                obterLinkLembrete(item)
+                                            "
+                                            class="btn btn-sm btn-outline-primary rounded-circle btn-acao-lembrete"
+                                            title="Abrir"
+                                        >
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
-
-    <!-- CARD BODY -->
-    <div class="card-body p-0">
-
-      <!-- SEM DADOS -->
-      <div
-        *ngIf="!lembretes?.length"
-        class="p-4 text-center text-muted">
-
-        Nenhum lembrete encontrado
-
-      </div>
-
-      <!-- TABELA -->
-      <table
-        class="table table-hover table-striped mb-0"
-        *ngIf="lembretes?.length">
-
-        <thead>
-
-          <tr>
-
-            <th>Tipo</th>
-
-            <th>Título</th>
-
-           
-
-            <th>Data</th>
-<th>Responsáveis</th>
-            <th class="text-end">
-              Ações
-            </th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          <tr *ngFor="let item of lembretes">
-
-            <!-- TIPO -->
-            <td class="align-middle">
-
-              <!-- EVENTO -->
-              <span
-                *ngIf="item.tipo === 'Evento'"
-                class="badge bg-primary">
-
-                <i class="fas fa-calendar me-1"></i>
-                Evento
-
-              </span>
-
-              <!-- TAREFA -->
-              <span
-                *ngIf="item.tipo === 'Tarefa'"
-                class="badge bg-success">
-
-                <i class="fas fa-tasks me-1"></i>
-                Tarefa
-
-              </span>
-
-            </td>
-
-            <!-- TITULO -->
-            <td class="align-middle">
-
-              <div class="fw-semibold">
-
-                {{ item.titulo }}
-
-              </div>
-
-              <!-- BADGES -->
-              <div class="mt-1">
-
-                <span
-                  *ngIf="item.recorrente"
-                  class="badge bg-info me-1">
-
-                  Recorrente
-
-                </span>
-
-                <span
-                  *ngIf="item.diaInteiro"
-                  class="badge bg-dark">
-
-                  Dia inteiro
-
-                </span>
-
-              </div>
-
-            </td>
-
-            <!-- CATEGORIA -->
-         
-
-            <!-- DATA -->
-            <td class="align-middle text-nowrap">
-
-              <i class="fas fa-clock me-1 text-muted"></i>
-
-              {{ item.data | date:'dd/MM/yyyy' }}
-       <span
-                class="badge"
-                [ngClass]="{
-                  'bg-success': item.categoria === 'Hoje',
-                  'bg-warning text-dark': item.categoria === 'Amanhã',
-                  'bg-primary': item.categoria === 'Próximos'
-                }">
-
-                {{ item.categoria }}
-
-              </span>
-            </td>
-<td class="align-middle">
-
-  <ng-container *ngIf="item.responsaveis?.length">
-
-    <!-- PRIMEIRO -->
-    <span>
-
-      {{ item.responsaveis[0] }}
-
-    </span>
-
-    <!-- +X -->
-    <div
-      *ngIf="item.responsaveis.length > 1"
-      class="d-inline-block ms-2 dropdown">
-
-      <button
-        class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 dropdown-toggle"
-        type="button"
-        data-bs-toggle="dropdown">
-
-        +{{ item.responsaveis.length - 1 }}
-
-      </button>
-
-      <!-- DROPDOWN -->
-      <ul class="dropdown-menu shadow border-0">
-
-        <li
-          *ngFor="let r of item.responsaveis.slice(1)">
-
-          <span class="dropdown-item small">
-
-            {{ r }}
-
-          </span>
-
-        </li>
-
-      </ul>
-
-    </div>
-
-  </ng-container>
-
-  <span
-    *ngIf="!item.responsaveis?.length"
-    class="text-muted">
-
-    Nenhum
-
-  </span>
-
-</td>
-            <!-- AÇÕES -->
-            <td class="text-end align-middle">
-
-              <a
-                [routerLink]="obterLinkLembrete(item)"
-                class="btn btn-sm btn-outline-primary rounded-pill">
-
-                <i class="fas fa-eye me-1"></i>
-
-                Abrir
-
-              </a>
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
 
 </div>
-  </div>
     <div class="row">
-        <div class="col-12 col-lg-12 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
+      <!-- ========================================================= -->
+<!-- 5 ÚLTIMOS ATENDIMENTOS                                    -->
+<!-- ========================================================= -->
 
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">5 Últimos Atendimentos em {{currentYear}}</h5>
-                </div>
-                <div class="card flex-fill">
+<div class="col-12 col-lg-12 d-flex">
 
-                    <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>Codigo</th>
-                                <th class="d-none d-xxl-table-cell">Reclamantes</th>
-                                <th class="d-none d-xl-table-cell">Reclamadas</th>
-                                <th>Status</th>
-                                <th>Prazo</th>
-                                <th>Dt. Atendimento</th>
-                                <th class="d-none d-xl-table-cell text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let atendimento of consultaCincoUltimosAtendimentos">
-                                <!-- Código e ano base -->
-                                <td [attr.data-order]="atendimento.codigo" class="align-middle">
-                                    <div class="d-flex align-items-center">
+    <div class="card flex-fill w-100">
+
+        <!-- CABEÇALHO -->
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                5 Últimos Atendimentos em {{ currentYear }}
+            </h5>
+        </div>
+
+        <div class="card flex-fill">
+
+            <!-- SEM DADOS -->
+            <div
+                *ngIf="!consultaCincoUltimosAtendimentos?.length"
+                class="p-3 text-center text-muted"
+            >
+                Nenhum atendimento encontrado
+            </div>
+
+            <!-- TABELA -->
+            <div
+                class="table-responsive tabela-dashboard-wrapper"
+                *ngIf="consultaCincoUltimosAtendimentos?.length"
+            >
+
+                <table
+                    class="table table-hover table-striped align-middle mb-0 tabela-dashboard tabela-atendimentos"
+                >
+
+                    <thead>
+                        <tr>
+
+                            <th>
+                                <i class="fas fa-hashtag me-2 text-primary"></i>
+                                Código
+                            </th>
+
+                            <th>
+                                <i class="fas fa-user me-2 text-success"></i>
+                                Reclamantes
+                            </th>
+
+                            <th>
+                                <i class="fas fa-building me-2 text-warning"></i>
+                                Reclamadas
+                            </th>
+
+                            <th>
+                                <i class="fas fa-info-circle me-2 text-info"></i>
+                                Status
+                            </th>
+
+                            <th>
+                                <i class="fas fa-calendar-alt me-2 text-danger"></i>
+                                Prazo
+                            </th>
+
+                            <th>
+                                <i class="fas fa-clock me-2 text-secondary"></i>
+                                Dt. Atendimento
+                            </th>
+
+                            <th class="text-end">
+                                <i class="fas fa-cogs me-2 text-secondary"></i>
+                                Ações
+                            </th>
+
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr
+                            *ngFor="
+                                let atendimento of consultaCincoUltimosAtendimentos
+                            "
+                        >
+
+                            <!-- ======================================= -->
+                            <!-- CÓDIGO                                  -->
+                            <!-- ======================================= -->
+
+                            <td
+                                [attr.data-order]="atendimento.codigo"
+                                class="align-middle"
+                            >
+
+                                <div class="d-flex align-items-center">
+
+                                    <div
+                                        class="icone-dashboard bg-primary-subtle me-2"
+                                    >
+                                        <i class="fas fa-file-alt text-primary"></i>
+                                    </div>
+
+                                    <span class="texto-dashboard text-nowrap">
                                         {{ atendimento.codigo }}/{{ atendimento.anoBase }}
-                                    </div>
-                                </td>
+                                    </span>
 
-                                <!-- Reclamantes -->
-                                <td class="d-none d-xxl-table-cell">
-                                    <ng-container *ngIf="atendimento.grupoReclamantesAtendimento.length > 0">
-                                        {{ atendimento.grupoReclamantesAtendimento[0] }}
-                                        <div class="text-muted">
-                                        </div>
+                                </div>
 
-                                        <ng-container *ngIf="atendimento.grupoReclamantesAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of atendimento.grupoReclamantesAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
+                            </td>
 
-                                <!-- Reclamadas -->
-                                <td class="d-none d-xl-table-cell">
-                                    <ng-container *ngIf="atendimento.grupoReclamadasAtendimento.length > 0">
-                                        {{ atendimento.grupoReclamadasAtendimento[0] }}
-                                        <div class="text-muted">
 
-                                        </div>
+                            <!-- ======================================= -->
+                            <!-- RECLAMANTES                             -->
+                            <!-- ======================================= -->
 
-                                        <ng-container *ngIf="atendimento.grupoReclamadasAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of atendimento.grupoReclamadasAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
+                            <td class="align-middle">
 
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="badge rounded-pill" [ngClass]="{
-      'badge-subtle-success': atendimento.nomeStatus === 'Primeiro Atendimento',
-      'badge-subtle-primary': atendimento.nomeStatus === 'Dilação de Prazo',
-      'badge-subtle-danger': atendimento.nomeStatus === 'Finalizado'
-    }">
-                                            {{ atendimento.nomeStatus }}
-                                        </span>
-                                    </div>
+                                <ng-container
+                                   *ngIf="
+    (atendimento.grupoReclamantesAtendimento?.length ?? 0) > 0;
+    else semReclamanteAtendimento
+"
+                                >
 
-                                </td> <!-- Data + hora -->
-
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="me-2 mb-1 text-muted"
-                                            *ngIf="atendimento.prazo && !atendimento.prazo.startsWith('0001-01-01')">
-                                            {{ atendimento.prazo | date:'dd/MM/yyyy' }}
-                                        </span>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="me-2 mb-1 text-muted">
-
-                                            {{ atendimento.dataCadastro | date:'dd/MM/yyyy HH:mm'
-                                            }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <!-- Botões de ação -->
-                                <td class="d-none d-xl-table-cell text-end">
-                                    <a [routerLink]="['/admin/editar-atendimento', atendimento.idAtendimento]"
-                                        title="Editar" class="me-2">
-                                        <i class="align-middle fas fa-fw fa-pencil-alt"></i>
-                                    </a>
-                                    <a [href]="urlBase + '/api/atendimento/export-pdf-atendimento?codigo=' + atendimento.codigo + '&anoBase=' + atendimento.anoBase"
-                                        target="_blank" rel="noopener noreferrer" title="Imprimir PDF" class="me-2">
-                                        <i class="align-middle fas fa-print"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-8 d-flex">
-            <div class="card flex-fill w-100">
-                <div class="card-header">
-                    <div class="card-actions float-end">
-                        <div class="dropdown position-relative">
-                            <a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle" data-lucide="more-horizontal"></i>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="card-title mb-0">5 Últimas Reclamações em {{currentYear}}</h5>
-                </div>
-                <div class="card flex-fill">
-
-                    <table class="table table-striped mb-0">
-                        <thead>
-                            <tr>
-                                <th>Codigo</th>
-                                <th class="d-none d-xxl-table-cell">Reclamantes</th>
-                                <th class="d-none d-xl-table-cell">Reclamadas</th>
-                                <th>Status</th>
-                                <th class="d-none d-xl-table-cell text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let reclamacao of consultarReclamacao">
-                                <!-- Código e ano base -->
-                                <td [attr.data-order]="reclamacao.codigo" class="align-middle">
                                     <div class="d-flex align-items-center">
-                                        {{ reclamacao.codigo }}/{{ reclamacao.anoBase }}
-                                    </div>
-                                </td>
 
-                                <!-- Reclamantes -->
-                                <td class="d-none d-xxl-table-cell">
-                                    <ng-container *ngIf="reclamacao.grupoReclamantesAtendimento.length > 0">
-                                        {{ reclamacao.grupoReclamantesAtendimento[0] }}
-                                        <div class="text-muted">
+                                        <div
+                                            class="icone-dashboard bg-success-subtle me-2"
+                                        >
+                                            <i class="fas fa-user text-success"></i>
+                                        </div>
+
+
+                                        <!-- PRIMEIRO RECLAMANTE -->
+
+                                        <div class="nome-tooltip">
+
+                                            <span
+                                                class="texto-dashboard nome-dashboard"
+                                            >
+                                                {{
+                                                    atendimento
+                                                        .grupoReclamantesAtendimento[0]
+                                                }}
+                                            </span>
+
+                                            <div class="nome-tooltip-conteudo">
+
+                                                <i class="fas fa-user me-2"></i>
+
+                                                {{
+                                                    atendimento
+                                                        .grupoReclamantesAtendimento[0]
+                                                }}
+
+                                            </div>
 
                                         </div>
 
-                                        <ng-container *ngIf="reclamacao.grupoReclamantesAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of reclamacao.grupoReclamantesAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
 
-                                <!-- Reclamadas -->
-                                <td class="d-none d-xl-table-cell">
-                                    <ng-container *ngIf="reclamacao.grupoReclamadasAtendimento.length > 0">
-                                        {{ reclamacao.grupoReclamadasAtendimento[0] }}
-                                        <div class="text-muted">
+                                        <!-- OUTROS RECLAMANTES -->
+
+                                        <div
+                                            *ngIf="
+                                                atendimento
+                                                    .grupoReclamantesAtendimento
+                                                    .length > 1
+                                            "
+                                            class="d-inline-block ms-2 dropdown"
+                                        >
+
+                                            <button
+                                                class="btn btn-sm btn-outline-success rounded-pill btn-mais-dashboard dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                            >
+                                                +{{
+                                                    atendimento
+                                                        .grupoReclamantesAtendimento
+                                                        .length - 1
+                                                }}
+                                            </button>
+
+
+                                            <ul
+                                                class="dropdown-menu shadow border-0"
+                                            >
+
+                                                <li
+                                                    *ngFor="
+                                                        let r of atendimento
+                                                            .grupoReclamantesAtendimento
+                                                            .slice(1)
+                                                    "
+                                                >
+
+                                                    <span
+                                                        class="dropdown-item small"
+                                                    >
+
+                                                        <i
+                                                            class="fas fa-user text-success me-2"
+                                                        ></i>
+
+                                                        {{ r }}
+
+                                                    </span>
+
+                                                </li>
+
+                                            </ul>
+
                                         </div>
-                                        <ng-container *ngIf="reclamacao.grupoReclamadasAtendimento.length > 1">
-                                            <div class="dropdown d-inline">
-                                                <a href="#" data-bs-toggle="dropdown" data-bs-display="static"
-                                                    class="ms-2">
-                                                    <span class="badge badge-subtle-success me-2">
-                                                        ver mais <i class="fas fa-fw fa-list-ol fa-lg"></i>
-                                                    </span>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li
-                                                        *ngFor="let r of reclamacao.grupoReclamadasAtendimento.slice(1); let i = index">
-                                                        <span class="dropdown-item">
-                                                            {{ r }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </ng-container>
-                                    </ng-container>
-                                </td>
-                                <!-- Data + hora -->
-                                <td>
-                                    <div class="d-flex flex-column w-100">
-                                        <span class="me-2 mb-1 text-muted">
 
-                                            {{ reclamacao.dataReclamacao | date:'dd/MM/yyyy'
-                                            }}
-                                        </span>
                                     </div>
-                                </td>
-                                <!-- Botões de ação -->
-                                <td class="d-none d-xl-table-cell text-end">
-                                    <a [routerLink]="['/admin/editar-reclamacao', reclamacao.idReclamacao]"
-                                        title="Editar" class="me-2">
-                                        <i class="align-middle fas fa-fw fa-pencil-alt"></i>
-                                    </a>
-                                    <a [href]="urlBase + '/api/reclamacao/export-pdf-reclamacao?codigo=' + reclamacao.codigo + '&anoBase=' + reclamacao.anoBase"
-                                        target="_blank" rel="noopener noreferrer" title="Imprimir PDF" class="me-2">
-                                        <i class="align-middle fas fa-print"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
 
-                    </table>
-                </div>
+                                </ng-container>
+
+
+                                <ng-template #semReclamanteAtendimento>
+
+                                    <span
+                                        class="texto-dashboard text-muted"
+                                    >
+                                        <i
+                                            class="fas fa-user-slash me-2"
+                                        ></i>
+                                        Nenhum
+                                    </span>
+
+                                </ng-template>
+
+                            </td>
+
+
+                            <!-- ======================================= -->
+                            <!-- RECLAMADAS                              -->
+                            <!-- ======================================= -->
+
+                            <td class="align-middle">
+
+                                <ng-container
+                                   *ngIf="
+    (atendimento.grupoReclamadasAtendimento?.length ?? 0) > 0;
+    else semReclamadaAtendimento
+"
+                                >
+
+                                    <div class="d-flex align-items-center">
+
+                                        <div
+                                            class="icone-dashboard bg-warning-subtle me-2"
+                                        >
+                                            <i
+                                                class="fas fa-building text-warning"
+                                            ></i>
+                                        </div>
+
+
+                                        <!-- PRIMEIRA RECLAMADA -->
+
+                                        <div class="nome-tooltip">
+
+                                            <span
+                                                class="texto-dashboard nome-dashboard"
+                                            >
+                                                {{
+                                                    atendimento
+                                                        .grupoReclamadasAtendimento[0]
+                                                }}
+                                            </span>
+
+                                            <div class="nome-tooltip-conteudo">
+
+                                                <i
+                                                    class="fas fa-building me-2"
+                                                ></i>
+
+                                                {{
+                                                    atendimento
+                                                        .grupoReclamadasAtendimento[0]
+                                                }}
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- OUTRAS RECLAMADAS -->
+
+                                        <div
+                                            *ngIf="
+                                                atendimento
+                                                    .grupoReclamadasAtendimento
+                                                    .length > 1
+                                            "
+                                            class="d-inline-block ms-2 dropdown"
+                                        >
+
+                                            <button
+                                                class="btn btn-sm btn-outline-warning rounded-pill btn-mais-dashboard dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                            >
+                                                +{{
+                                                    atendimento
+                                                        .grupoReclamadasAtendimento
+                                                        .length - 1
+                                                }}
+                                            </button>
+
+
+                                            <ul
+                                                class="dropdown-menu shadow border-0"
+                                            >
+
+                                                <li
+                                                    *ngFor="
+                                                        let r of atendimento
+                                                            .grupoReclamadasAtendimento
+                                                            .slice(1)
+                                                    "
+                                                >
+
+                                                    <span
+                                                        class="dropdown-item small"
+                                                    >
+
+                                                        <i
+                                                            class="fas fa-building text-warning me-2"
+                                                        ></i>
+
+                                                        {{ r }}
+
+                                                    </span>
+
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
+
+                                    </div>
+
+                                </ng-container>
+
+
+                                <ng-template #semReclamadaAtendimento>
+
+                                    <span
+                                        class="texto-dashboard text-muted"
+                                    >
+                                        <i
+                                            class="fas fa-building me-2"
+                                        ></i>
+                                        Nenhuma
+                                    </span>
+
+                                </ng-template>
+
+                            </td>
+
+
+                            <!-- ======================================= -->
+                            <!-- STATUS                                  -->
+                            <!-- ======================================= -->
+
+                            <td class="align-middle">
+
+                                <span
+                                    class="badge rounded-pill"
+                                    [ngClass]="{
+                                        'badge-subtle-success':
+                                            atendimento.nomeStatus ===
+                                            'Primeiro Atendimento',
+
+                                        'badge-subtle-primary':
+                                            atendimento.nomeStatus ===
+                                            'Dilação de Prazo',
+
+                                        'badge-subtle-danger':
+                                            atendimento.nomeStatus ===
+                                            'Finalizado'
+                                    }"
+                                >
+                                    {{ atendimento.nomeStatus }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- ======================================= -->
+                            <!-- PRAZO                                   -->
+                            <!-- ======================================= -->
+
+                            <td class="align-middle text-nowrap">
+
+                                <ng-container
+                                    *ngIf="
+                                        atendimento.prazo &&
+                                        !atendimento.prazo.startsWith(
+                                            '0001-01-01'
+                                        )
+                                    "
+                                >
+
+                                    <i
+                                        class="fas fa-calendar-alt text-danger me-2"
+                                    ></i>
+
+                                    <span class="texto-dashboard">
+                                        {{
+                                            atendimento.prazo
+                                                | date: 'dd/MM/yyyy'
+                                        }}
+                                    </span>
+
+                                </ng-container>
+
+                                <span
+                                    *ngIf="
+                                        !atendimento.prazo ||
+                                        atendimento.prazo.startsWith(
+                                            '0001-01-01'
+                                        )
+                                    "
+                                    class="text-muted"
+                                >
+                                    —
+                                </span>
+
+                            </td>
+
+
+                            <!-- ======================================= -->
+                            <!-- DATA ATENDIMENTO                        -->
+                            <!-- ======================================= -->
+
+                            <td class="align-middle text-nowrap">
+
+                                <i
+                                    class="fas fa-clock text-secondary me-2"
+                                ></i>
+
+                                <span class="texto-dashboard">
+                                    {{
+                                        atendimento.dataCadastro
+                                            | date: 'dd/MM/yyyy HH:mm'
+                                    }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- ======================================= -->
+                            <!-- AÇÕES                                   -->
+                            <!-- ======================================= -->
+
+                            <td class="text-end align-middle">
+
+                                <div
+                                    class="d-flex justify-content-end gap-1"
+                                >
+
+                                    <!-- EDITAR -->
+
+                                    <a
+                                        [routerLink]="[
+                                            '/admin/editar-atendimento',
+                                            atendimento.idAtendimento
+                                        ]"
+                                        class="btn btn-sm btn-outline-primary rounded-circle btn-acao-dashboard"
+                                        title="Editar atendimento"
+                                    >
+                                        <i
+                                            class="fas fa-pencil-alt"
+                                        ></i>
+                                    </a>
+
+
+                                    <!-- PDF -->
+
+                                    <a
+                                        [href]="
+                                            urlBase +
+                                            '/api/atendimento/export-pdf-atendimento?codigo=' +
+                                            atendimento.codigo +
+                                            '&anoBase=' +
+                                            atendimento.anoBase
+                                        "
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-sm btn-outline-danger rounded-circle btn-acao-dashboard"
+                                        title="Imprimir PDF"
+                                    >
+                                        <i class="fas fa-print"></i>
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
             </div>
+
         </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- 5 ÚLTIMAS RECLAMAÇÕES                                     -->
+<!-- ========================================================= -->
+
+<div class="col-12 col-lg-8 d-flex">
+
+    <div class="card flex-fill w-100">
+
+        <!-- CABEÇALHO -->
+        <div class="card-header">
+
+            <h5 class="card-title mb-0">
+                5 Últimas Reclamações em {{ currentYear }}
+            </h5>
+
+        </div>
+
+
+        <div class="card flex-fill">
+
+            <!-- SEM DADOS -->
+
+            <div
+                *ngIf="!consultarReclamacao?.length"
+                class="p-3 text-center text-muted"
+            >
+                Nenhuma reclamação encontrada
+            </div>
+
+
+            <!-- TABELA -->
+
+            <div
+                class="table-responsive tabela-dashboard-wrapper"
+                *ngIf="consultarReclamacao?.length"
+            >
+
+                <table
+                    class="table table-hover table-striped align-middle mb-0 tabela-dashboard tabela-reclamacoes"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                <i class="fas fa-hashtag me-2 text-primary"></i>
+                                Código
+                            </th>
+
+                            <th>
+                                <i class="fas fa-user me-2 text-success"></i>
+                                Reclamantes
+                            </th>
+
+                            <th>
+                                <i class="fas fa-building me-2 text-warning"></i>
+                                Reclamadas
+                            </th>
+
+                            <th>
+                                <i class="fas fa-calendar-alt me-2 text-info"></i>
+                                Data
+                            </th>
+
+                            <th class="text-end">
+                                <i class="fas fa-cogs me-2 text-secondary"></i>
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr
+                            *ngFor="
+                                let reclamacao of consultarReclamacao
+                            "
+                        >
+
+                            <!-- CÓDIGO -->
+
+                            <td
+                                [attr.data-order]="reclamacao.codigo"
+                                class="align-middle"
+                            >
+
+                                <div class="d-flex align-items-center">
+
+                                    <div
+                                        class="icone-dashboard bg-primary-subtle me-2"
+                                    >
+                                        <i
+                                            class="fas fa-file-alt text-primary"
+                                        ></i>
+                                    </div>
+
+                                    <span
+                                        class="texto-dashboard text-nowrap"
+                                    >
+                                        {{ reclamacao.codigo }}/{{ reclamacao.anoBase }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- RECLAMANTES -->
+
+                            <td class="align-middle">
+
+                                <ng-container
+                                *ngIf="
+    (reclamacao.grupoReclamantesAtendimento?.length ?? 0) > 0;
+    else semReclamanteReclamacao
+"
+                                >
+
+                                    <div class="d-flex align-items-center">
+
+                                        <div
+                                            class="icone-dashboard bg-success-subtle me-2"
+                                        >
+                                            <i
+                                                class="fas fa-user text-success"
+                                            ></i>
+                                        </div>
+
+
+                                        <div class="nome-tooltip">
+
+                                            <span
+                                                class="texto-dashboard nome-dashboard"
+                                            >
+                                                {{
+                                                    reclamacao
+                                                        .grupoReclamantesAtendimento[0]
+                                                }}
+                                            </span>
+
+                                            <div
+                                                class="nome-tooltip-conteudo"
+                                            >
+
+                                                <i
+                                                    class="fas fa-user me-2"
+                                                ></i>
+
+                                                {{
+                                                    reclamacao
+                                                        .grupoReclamantesAtendimento[0]
+                                                }}
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div
+                                            *ngIf="
+                                                reclamacao
+                                                    .grupoReclamantesAtendimento
+                                                    .length > 1
+                                            "
+                                            class="d-inline-block ms-2 dropdown"
+                                        >
+
+                                            <button
+                                                class="btn btn-sm btn-outline-success rounded-pill btn-mais-dashboard dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                            >
+                                                +{{
+                                                    reclamacao
+                                                        .grupoReclamantesAtendimento
+                                                        .length - 1
+                                                }}
+                                            </button>
+
+
+                                            <ul
+                                                class="dropdown-menu shadow border-0"
+                                            >
+
+                                                <li
+                                                    *ngFor="
+                                                        let r of reclamacao
+                                                            .grupoReclamantesAtendimento
+                                                            .slice(1)
+                                                    "
+                                                >
+
+                                                    <span
+                                                        class="dropdown-item small"
+                                                    >
+
+                                                        <i
+                                                            class="fas fa-user text-success me-2"
+                                                        ></i>
+
+                                                        {{ r }}
+
+                                                    </span>
+
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
+
+                                    </div>
+
+                                </ng-container>
+
+
+                                <ng-template #semReclamanteReclamacao>
+
+                                    <span
+                                        class="texto-dashboard text-muted"
+                                    >
+                                        <i
+                                            class="fas fa-user-slash me-2"
+                                        ></i>
+                                        Nenhum
+                                    </span>
+
+                                </ng-template>
+
+                            </td>
+
+
+                            <!-- RECLAMADAS -->
+
+                            <td class="align-middle">
+
+                                <ng-container
+                               *ngIf="
+    (reclamacao.grupoReclamadasAtendimento?.length ?? 0) > 0;
+    else semReclamadaReclamacao
+"
+                                >
+
+                                    <div class="d-flex align-items-center">
+
+                                        <div
+                                            class="icone-dashboard bg-warning-subtle me-2"
+                                        >
+                                            <i
+                                                class="fas fa-building text-warning"
+                                            ></i>
+                                        </div>
+
+
+                                        <div class="nome-tooltip">
+
+                                            <span
+                                                class="texto-dashboard nome-dashboard"
+                                            >
+                                                {{
+                                                    reclamacao
+                                                        .grupoReclamadasAtendimento[0]
+                                                }}
+                                            </span>
+
+                                            <div
+                                                class="nome-tooltip-conteudo"
+                                            >
+
+                                                <i
+                                                    class="fas fa-building me-2"
+                                                ></i>
+
+                                                {{
+                                                    reclamacao
+                                                        .grupoReclamadasAtendimento[0]
+                                                }}
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div
+                                            *ngIf="
+                                                reclamacao
+                                                    .grupoReclamadasAtendimento
+                                                    .length > 1
+                                            "
+                                            class="d-inline-block ms-2 dropdown"
+                                        >
+
+                                            <button
+                                                class="btn btn-sm btn-outline-warning rounded-pill btn-mais-dashboard dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                            >
+                                                +{{
+                                                    reclamacao
+                                                        .grupoReclamadasAtendimento
+                                                        .length - 1
+                                                }}
+                                            </button>
+
+
+                                            <ul
+                                                class="dropdown-menu shadow border-0"
+                                            >
+
+                                                <li
+                                                    *ngFor="
+                                                        let r of reclamacao
+                                                            .grupoReclamadasAtendimento
+                                                            .slice(1)
+                                                    "
+                                                >
+
+                                                    <span
+                                                        class="dropdown-item small"
+                                                    >
+
+                                                        <i
+                                                            class="fas fa-building text-warning me-2"
+                                                        ></i>
+
+                                                        {{ r }}
+
+                                                    </span>
+
+                                                </li>
+
+                                            </ul>
+
+                                        </div>
+
+                                    </div>
+
+                                </ng-container>
+
+
+                                <ng-template #semReclamadaReclamacao>
+
+                                    <span
+                                        class="texto-dashboard text-muted"
+                                    >
+                                        <i
+                                            class="fas fa-building me-2"
+                                        ></i>
+                                        Nenhuma
+                                    </span>
+
+                                </ng-template>
+
+                            </td>
+
+
+                            <!-- DATA -->
+
+                            <td class="align-middle text-nowrap">
+
+                                <i
+                                    class="fas fa-calendar-alt text-info me-2"
+                                ></i>
+
+                                <span class="texto-dashboard">
+
+                                    {{
+                                        reclamacao.dataReclamacao
+                                            | date: 'dd/MM/yyyy'
+                                    }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- AÇÕES -->
+
+                            <td class="text-end align-middle">
+
+                                <div
+                                    class="d-flex justify-content-end gap-1"
+                                >
+
+                                    <!-- EDITAR -->
+
+                                    <a
+                                        [routerLink]="[
+                                            '/admin/editar-reclamacao',
+                                            reclamacao.idReclamacao
+                                        ]"
+                                        class="btn btn-sm btn-outline-primary rounded-circle btn-acao-dashboard"
+                                        title="Editar reclamação"
+                                    >
+
+                                        <i
+                                            class="fas fa-pencil-alt"
+                                        ></i>
+
+                                    </a>
+
+
+                                    <!-- PDF -->
+
+                                    <a
+                                        [href]="
+                                            urlBase +
+                                            '/api/reclamacao/export-pdf-reclamacao?codigo=' +
+                                            reclamacao.codigo +
+                                            '&anoBase=' +
+                                            reclamacao.anoBase
+                                        "
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-sm btn-outline-danger rounded-circle btn-acao-dashboard"
+                                        title="Imprimir PDF"
+                                    >
+
+                                        <i class="fas fa-print"></i>
+
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
         <div class="col-12 col-lg-6 col-xl-4 d-flex">
             <div class="card flex-fill w-100">
                 <div class="card-header">
